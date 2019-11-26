@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  Algorithm
+//  9372
 //
 //  Created by 진준호 on 2019/11/26.
 //  Copyright © 2019 진준호. All rights reserved.
