@@ -106,6 +106,8 @@ int escape()
 }
 int main(int argc, const char * argv[]) {
     // insert code here...
+    std::cin.sync_with_stdio(false);
+    std::cin.tie(NULL);
     
     int t;
     
