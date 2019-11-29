@@ -61,7 +61,7 @@ int main(int argc, const char * argv[]) {
         std::cin >> L >> R >> C;
         if(L == 0 && R == 0 && C == 0)
         {
-            break;
+            break;13
         }
         for(int i = 0; i < L; i++)
         {
