@@ -21,6 +21,13 @@
 			remoteGlobalIDString = DC7532482390AC6200D5BE44;
 			remoteInfo = 1613;
 		};
+		DC75326F2390B32200D5BE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DC75326B2390B32100D5BE44 /* 1726.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC7532612390B32100D5BE44;
+			remoteInfo = 1726;
+		};
 		DCFFA182238CB3C200CC6B83 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DCFFA17E238CB3C200CC6B83 /* 5427.xcodeproj */;
@@ -60,6 +67,7 @@
 		DC7532222390A1DB00D5BE44 /* Algorithm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Algorithm; path = "/Users/junho/Desktop/C++/Algorithm/build/Debug/Algorithm"; sourceTree = "<absolute>"; };
 		DC7532392390A20200D5BE44 /* 6593.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 6593.xcodeproj; path = 6593/6593.xcodeproj; sourceTree = "<group>"; };
 		DC7532522390AC6200D5BE44 /* 1613.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 1613.xcodeproj; path = 1613/1613.xcodeproj; sourceTree = "<group>"; };
+		DC75326B2390B32100D5BE44 /* 1726.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 1726.xcodeproj; path = 1726/1726.xcodeproj; sourceTree = "<group>"; };
 		DCFFA17E238CB3C200CC6B83 /* 5427.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 5427.xcodeproj; path = 5427/5427.xcodeproj; sourceTree = "<group>"; };
 		DCFFA197238CB3EB00CC6B83 /* 9372.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 9372.xcodeproj; path = 9372/9372.xcodeproj; sourceTree = "<group>"; };
 		DCFFA1B0238CC93000CC6B83 /* 15954.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 15954.xcodeproj; path = 15954/15954.xcodeproj; sourceTree = "<group>"; };
@@ -92,9 +100,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		DC75326C2390B32100D5BE44 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC7532702390B32200D5BE44 /* 1726 */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		DCFFA158238CB35E00CC6B83 = {
 			isa = PBXGroup;
 			children = (
+				DC75326B2390B32100D5BE44 /* 1726.xcodeproj */,
 				DC7532522390AC6200D5BE44 /* 1613.xcodeproj */,
 				DC7532392390A20200D5BE44 /* 6593.xcodeproj */,
 				DCFFA1B0238CC93000CC6B83 /* 15954.xcodeproj */,
@@ -182,6 +199,10 @@
 					ProjectRef = DC7532522390AC6200D5BE44 /* 1613.xcodeproj */;
 				},
 				{
+					ProductGroup = DC75326C2390B32100D5BE44 /* Products */;
+					ProjectRef = DC75326B2390B32100D5BE44 /* 1726.xcodeproj */;
+				},
+				{
 					ProductGroup = DCFFA17F238CB3C200CC6B83 /* Products */;
 					ProjectRef = DCFFA17E238CB3C200CC6B83 /* 5427.xcodeproj */;
 				},
@@ -214,6 +235,13 @@
 			fileType = "compiled.mach-o.executable";
 			path = 1613;
 			remoteRef = DC7532562390AC6300D5BE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DC7532702390B32200D5BE44 /* 1726 */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = 1726;
+			remoteRef = DC75326F2390B32200D5BE44 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		DCFFA183238CB3C200CC6B83 /* 5427 */ = {
