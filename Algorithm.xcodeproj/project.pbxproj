@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
+		DC0F57A6239730780035FA0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DC0F57A2239730780035FA0B /* 9205.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC0F5798239730770035FA0B;
+			remoteInfo = 9205;
+		};
 		DC75323D2390A20300D5BE44 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DC7532392390A20200D5BE44 /* 6593.xcodeproj */;
@@ -64,7 +71,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		DC7532222390A1DB00D5BE44 /* Algorithm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Algorithm; path = "/Users/junho/Desktop/C++/Algorithm/build/Debug/Algorithm"; sourceTree = "<absolute>"; };
+		DC0F5788239730480035FA0B /* Algorithm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Algorithm; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC0F57A2239730780035FA0B /* 9205.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 9205.xcodeproj; path = 9205/9205.xcodeproj; sourceTree = "<group>"; };
 		DC7532392390A20200D5BE44 /* 6593.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 6593.xcodeproj; path = 6593/6593.xcodeproj; sourceTree = "<group>"; };
 		DC7532522390AC6200D5BE44 /* 1613.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 1613.xcodeproj; path = 1613/1613.xcodeproj; sourceTree = "<group>"; };
 		DC75326B2390B32100D5BE44 /* 1726.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 1726.xcodeproj; path = 1726/1726.xcodeproj; sourceTree = "<group>"; };
@@ -84,6 +92,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DC0F57A3239730780035FA0B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC0F57A7239730780035FA0B /* 9205 */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		DC75323A2390A20200D5BE44 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -111,12 +127,14 @@
 		DCFFA158238CB35E00CC6B83 = {
 			isa = PBXGroup;
 			children = (
+				DC0F57A2239730780035FA0B /* 9205.xcodeproj */,
 				DC75326B2390B32100D5BE44 /* 1726.xcodeproj */,
 				DC7532522390AC6200D5BE44 /* 1613.xcodeproj */,
 				DC7532392390A20200D5BE44 /* 6593.xcodeproj */,
 				DCFFA1B0238CC93000CC6B83 /* 15954.xcodeproj */,
 				DCFFA197238CB3EB00CC6B83 /* 9372.xcodeproj */,
 				DCFFA17E238CB3C200CC6B83 /* 5427.xcodeproj */,
+				DC0F5788239730480035FA0B /* Algorithm */,
 			);
 			sourceTree = "<group>";
 		};
@@ -161,7 +179,7 @@
 			);
 			name = Algorithm;
 			productName = Algorithm;
-			productReference = DC7532222390A1DB00D5BE44 /* Algorithm */;
+			productReference = DC0F5788239730480035FA0B /* Algorithm */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -211,6 +229,10 @@
 					ProjectRef = DC7532392390A20200D5BE44 /* 6593.xcodeproj */;
 				},
 				{
+					ProductGroup = DC0F57A3239730780035FA0B /* Products */;
+					ProjectRef = DC0F57A2239730780035FA0B /* 9205.xcodeproj */;
+				},
+				{
 					ProductGroup = DCFFA198238CB3EB00CC6B83 /* Products */;
 					ProjectRef = DCFFA197238CB3EB00CC6B83 /* 9372.xcodeproj */;
 				},
@@ -223,6 +245,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		DC0F57A7239730780035FA0B /* 9205 */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = 9205;
+			remoteRef = DC0F57A6239730780035FA0B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		DC75323E2390A20300D5BE44 /* 6593 */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
