@@ -14,13 +14,8 @@
 #include <climits>
 
 struct road{
-    int u;
     int v;
     int p;
-};
-struct dist{
-    int distance;
-    std::vector<int> before;
 };
 struct comp{
     bool operator()(const road &a, const road &b)
@@ -28,72 +23,79 @@ struct comp{
         return a.p > b.p;
     }
 };
-
-int dijkstra(int s, int d, std::vector<std::vector<std::pair<int, int>>> &list)
+int n, m, s, d, dist[500];
+bool visited[500], prohibited[500][500];
+std::vector<int> prior[500];
+std::vector<road> list[500];
+std::priority_queue<road, std::vector<road>, comp> pq;
+void remove_()
 {
-    std::priority_queue<road, std::vector<road>, comp> pq;
+    std::queue<int> q;
     
-    int visited[501][501];
-    dist dists[501];
-    
-    std::fill(visited[0], visited[0] + 501 * 501, 0);
-    for(int i = 0; i < 501; i++)
+    for(int i = 0; i < n; i++)
     {
-        dists[i].distance = INT_MAX;
-        dists[i].before = {-1};
+        visited[i] = false;
+        dist[i] = INT_MAX;
     }
     
-    dists[s].distance = 0;
-    for(std::vector<std::pair<int, int>>::iterator it = list[s].begin(); it != list[s].end(); it++)
+    q.push(d);
+    while(!q.empty())
     {
-        pq.push({s, it->first, it->second});
-        visited[s][it->first] = 1;
+        int front = q.front();
+        q.pop();
+        for(std::vector<int>::iterator it = prior[front].begin(); it != prior[front].end(); it++)
+        {
+            if(visited[*it])
+            {
+                continue;
+            }
+            prohibited[*it][front] = true;
+            q.push(*it);
+        }
     }
+}
+int dijkstra()
+{
+    dist[s] = 0;
+    pq.push({s, 0});
     while(!pq.empty())
     {
         road top = pq.top();
         pq.pop();
-        if(visited[top.u][top.v] == 1)
+        if(visited[top.v] || dist[top.v] < top.p)
         {
             continue;
         }
-        int new_dist = dists[top.u].distance + top.p;
-        if(dists[top.v].distance > new_dist)
+        for(std::vector<road>::iterator it = list[top.v].begin(); it != list[top.v].end(); it++)
         {
-            dists[top.v].distance = new_dist;
-            dists[top.v].before.clear();
-            dists[top.v].before.push_back(top.u);
-        }
-        else if(dists[top.v].distance == new_dist)
-        {
-            dists[top.v].before.push_back(top.u);
-        }
-        visited[top.u][top.v] = 1;
-        for(std::vector<std::pair<int, int>>::iterator it = list[top.v].begin(); it != list[top.v].end(); it++)
-        {
-            if(visited[top.v][it->first] == 0)
+            if(visited[it->v] || prohibited[top.v][it->v])
             {
-                pq.push({top.v, it->first, it->second});
-                visited[s][it->first] = 1;
+                continue;
             }
+            if(dist[it->v] > top.p + it->p)
+            {
+                dist[it->v] = top.p + it->p;
+                prior[it->v].clear();
+                prior[it->v].push_back(top.v);
+            }
+            else if(dist[it->v] == top.p + it->p)
+            {
+                prior[it->v].push_back(top.v);
+            }
+            pq.push({it->v, dist[it->v]});
         }
+        visited[top.v] = true;
     }
-    std::cout << dists[d].distance << "!!\n";
-    for(int i = 0; i < (int)dists[d].before.size(); i++)
+    if(dist[d] == INT_MAX)
     {
-        std::cout << dists[d].before[i] << '\n';
+        return -1;
     }
-    return 0;
+    return dist[d];
 }
 int main(int argc, const char * argv[]) {
     // insert code here...
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
-    
-    int n, m, s, d;
-
-    std::vector<std::vector<std::pair<int, int>>> list;
-    list.reserve(501);
     
     while(1)
     {
@@ -103,22 +105,27 @@ int main(int argc, const char * argv[]) {
         {
             break;
         }
+        for(int i = 0; i < n; i++)
+        {
+            list[i].clear();
+            prior[i].clear();
+            visited[i] = false;
+            for(int j = 0; j < n; j++)
+            {
+                prohibited[i][j] = false;
+            }
+            dist[i] = INT_MAX;
+        }
         std::cin >> s >> d;
         int u, v, p;
         for(int i = 0; i < m; i++)
         {
             std::cin >> u >> v >> p;
-            list[u].push_back(std::make_pair(v, p));
+            list[u].push_back({v, p});
         }
-
-        std::cout << dijkstra(s, d, list) << '\n';
-        
-        for(int i = 0; i < n; i++)
-        {
-            list[i].clear();
-        }
+        dijkstra();
+        remove_();
+        std::cout << dijkstra() << '\n';
     }
-    
-    
     return 0;
 }
