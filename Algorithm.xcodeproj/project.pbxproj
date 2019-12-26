@@ -42,6 +42,20 @@
 			remoteGlobalIDString = DC0F57CA23974C800035FA0B;
 			remoteInfo = 5719;
 		};
+		DC13A67623B460910099BEAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DC13A67223B460900099BEAE /* 1300.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC13A66823B460900099BEAE;
+			remoteInfo = 1300;
+		};
+		DC13A69B23B469880099BEAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DC13A69723B469870099BEAE /* 3020.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC13A68D23B469870099BEAE;
+			remoteInfo = 3020;
+		};
 		DC75323D2390A20300D5BE44 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DC7532392390A20200D5BE44 /* 6593.xcodeproj */;
@@ -112,6 +126,8 @@
 		DC0F57A2239730780035FA0B /* 9205.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 9205.xcodeproj; path = 9205/9205.xcodeproj; sourceTree = "<group>"; };
 		DC0F57BB239734F30035FA0B /* 1939.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 1939.xcodeproj; path = 1939/1939.xcodeproj; sourceTree = "<group>"; };
 		DC0F57D423974C800035FA0B /* 5719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 5719.xcodeproj; path = 5719/5719.xcodeproj; sourceTree = "<group>"; };
+		DC13A67223B460900099BEAE /* 1300.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 1300.xcodeproj; path = 1300/1300.xcodeproj; sourceTree = "<group>"; };
+		DC13A69723B469870099BEAE /* 3020.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 3020.xcodeproj; path = 3020/3020.xcodeproj; sourceTree = "<group>"; };
 		DC7532392390A20200D5BE44 /* 6593.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 6593.xcodeproj; path = 6593/6593.xcodeproj; sourceTree = "<group>"; };
 		DC7532522390AC6200D5BE44 /* 1613.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 1613.xcodeproj; path = 1613/1613.xcodeproj; sourceTree = "<group>"; };
 		DC75326B2390B32100D5BE44 /* 1726.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = 1726.xcodeproj; path = 1726/1726.xcodeproj; sourceTree = "<group>"; };
@@ -172,6 +188,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		DC13A67323B460900099BEAE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC13A67723B460910099BEAE /* 1300 */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DC13A69823B469870099BEAE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC13A69C23B469880099BEAE /* 3020 */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		DC75323A2390A20200D5BE44 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -207,6 +239,8 @@
 		DCFFA158238CB35E00CC6B83 = {
 			isa = PBXGroup;
 			children = (
+				DC13A69723B469870099BEAE /* 3020.xcodeproj */,
+				DC13A67223B460900099BEAE /* 1300.xcodeproj */,
 				DC063D9C23B38B3F00ED37D4 /* 2250.xcodeproj */,
 				DC063D7923B3792D00ED37D4 /* 2668.xcodeproj */,
 				DC77B87923A4D27700D6D49F /* 3184.xcodeproj */,
@@ -294,6 +328,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = DC13A67323B460900099BEAE /* Products */;
+					ProjectRef = DC13A67223B460900099BEAE /* 1300.xcodeproj */;
+				},
+				{
 					ProductGroup = DCFFA1B1238CC93000CC6B83 /* Products */;
 					ProjectRef = DCFFA1B0238CC93000CC6B83 /* 15954.xcodeproj */;
 				},
@@ -316,6 +354,10 @@
 				{
 					ProductGroup = DC063D7A23B3792D00ED37D4 /* Products */;
 					ProjectRef = DC063D7923B3792D00ED37D4 /* 2668.xcodeproj */;
+				},
+				{
+					ProductGroup = DC13A69823B469870099BEAE /* Products */;
+					ProjectRef = DC13A69723B469870099BEAE /* 3020.xcodeproj */;
 				},
 				{
 					ProductGroup = DC77B87A23A4D27700D6D49F /* Products */;
@@ -383,6 +425,20 @@
 			fileType = "compiled.mach-o.executable";
 			path = 5719;
 			remoteRef = DC0F57D823974C810035FA0B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DC13A67723B460910099BEAE /* 1300 */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = 1300;
+			remoteRef = DC13A67623B460910099BEAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DC13A69C23B469880099BEAE /* 3020 */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = 3020;
+			remoteRef = DC13A69B23B469880099BEAE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		DC75323E2390A20300D5BE44 /* 6593 */ = {
