@@ -88,7 +88,7 @@
 		DC77B86723A4D27700D6D49F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "진준호";
 				TargetAttributes = {
 					DC77B86E23A4D27700D6D49F = {
@@ -238,6 +238,7 @@
 		DC77B87723A4D27700D6D49F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9F9U65ZVT8;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -248,6 +249,7 @@
 		DC77B87823A4D27700D6D49F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9F9U65ZVT8;
 				ENABLE_HARDENED_RUNTIME = YES;
