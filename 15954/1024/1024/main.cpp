@@ -14,48 +14,41 @@ int main(int argc, const char * argv[]) {
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
     
-    int N, L, s, e, sum, idx, min_len = 1000000001, ms, me;
+    int N, L, s = -1, e = -1;
+    
     std::cin >> N >> L;
     
-    idx = 1;
-    s = 0;
-    e = 0;
-    sum = 0;
-    while(idx <= N + 1)
+    for(int i = L; i <= N + 1; i++)
     {
-        if(sum == N && (e - s + 1) < L)
+        if(i > 100)
         {
             break;
         }
-        if(sum == N && (e - s + 1) >= L && min_len > (e - s + 1))
+        if(i % 2 == 1 && N % i == 0)
         {
-            min_len = (e - s + 1);
-            ms = s;
-            me = e;
+            s = (N / i) - i / 2;
+            e = (N / i) + i / 2;
+            break;
         }
-        if(sum < N)
+        else if(i % 2 == 0 && i / 2 == N % i)
         {
-            sum += idx;
-            e = idx;
-            idx++;
-        }
-        else
-        {
-            sum -= s;
-            s++;
+            s = N / i - (i - 1) / 2;
+            e = N / i + i / 2;
+            break;
         }
     }
-    if(min_len <= 100)
+    if(s < 0)
     {
-        for(int i = ms; i <= me; i++)
+        std::cout << "-1\n";
+    }
+    else
+    {
+        for(int i = s; i <= e; i++)
         {
             std::cout << i << ' ';
         }
         std::cout << '\n';
     }
-    else
-    {
-        std::cout << "-1\n";
-    }
+    
     return 0;
 }
