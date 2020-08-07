@@ -10,8 +10,8 @@ int main()
     int n, m;
     std::cin >> n;
     std::vector<std::vector<int>> link(n + 1);
-    std::vector<int> infect_time(n + 1, -1), neighbor_infected(n + 1, 0);
-    std::queue<int> preprocess;
+    std::vector<int> infect_time(n + 1, -1), neighbor(n + 1);
+    std::queue<int> keep;
     std::queue<std::pair<int, int>> q;
     for(int i = 1; i <= n; i++)
     {
@@ -26,6 +26,11 @@ int main()
             link[i].push_back(con);
         }
     }
+    for(int i = 1; i <= n; i++)
+    {
+        int sz = (int)link[i].size();
+        neighbor[i] = sz % 2 ? sz / 2 + 1 : sz / 2;
+    }
     std::cin >> m;
     for(int i = 0; i < m; i++)
     {
@@ -33,31 +38,27 @@ int main()
         std::cin >> host;
         q.push(std::make_pair(host, 0));
         infect_time[host] = 0;
-        for(int next : link[host])
-        {
-            neighbor_infected[next]++;
-        }
+        keep.push(host);
     }
-    int tick = 0;
+    int tick = -1;
     while(!q.empty())
     {
         std::pair<int, int> front = q.front();
+        q.pop();
         int idx = front.first;
         int time = front.second;
-        std::cout << idx << ' ' << time << '\n';
-        q.pop();
-        if(tick != time)
+        if(tick < time)
         {
-            while(!preprocess.empty())
+            tick = time;
+            while(!keep.empty())
             {
-                int idx = preprocess.front();
-                preprocess.pop();
-                for(int next : link[idx])
+                int now = keep.front();
+                keep.pop();
+                for(int next : link[now])
                 {
-                    neighbor_infected[next]++;
+                    neighbor[next]--;
                 }
             }
-            tick = time;
         }
         for(int next : link[idx])
         {
@@ -65,11 +66,11 @@ int main()
             {
                 continue;
             }
-            if(neighbor_infected[next] * 2 >= (int)link[next].size())
+            if(neighbor[next] <= 0)
             {
-                infect_time[next] = time + 1;
                 q.push(std::make_pair(next, time + 1));
-                preprocess.push(next);
+                infect_time[next] = time + 1;
+                keep.push(next);
             }
         }
     }
