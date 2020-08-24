@@ -1,8 +1,73 @@
 {
     "version": "2.0.0",
+    "runner": "terminal",
+    "type": "shell",
+    "echoCommand": true,
+    "presentation": {
+        "reveal": "always"
+    },
     "tasks": [
         {
-            "label": "build_gcc",
+            "label": "[Win] build_gcc",
+            "command": "gcc",
+            "args": [
+                "$(file)",
+                "-o",
+                "$(fileDirname)/$(fileBasenameNoExtention}"
+            ],
+            "group": "build",
+            "problemMatcher": {
+                "fileLocation": [
+                    "relative",
+                    "$(workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "[Win] build_g++",
+            "command": "g++",
+            "args": [
+                "$(file)",
+                "-o",
+                "$(fileDirname)/$(fileBasenameNoExtention}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "fileLocation": [
+                    "relative",
+                    "$(workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "[Win] execute",
+            "command": "cmd",
+            "group": "test",
+            "args": [
+                "/C", "$(fileDirname)\\$(fileBasenameNoExtension}"
+            ]
+        },
+        {
+            "label": "[LINUX] build_gcc",
             "type": "shell",
             "command": "/usr/bin/gcc",
             "args": [
@@ -23,7 +88,7 @@
             }
         },
         {
-            "label": "build_g++",
+            "label": "[LINUX] build_g++",
             "type": "shell",
             "command": "/usr/bin/g++",
             "args": [
@@ -45,7 +110,7 @@
             }
         },
         {
-            "label": "exec",
+            "label": "[LINUX] exec",
             "type": "shell",
             "command": "${fileDirname}/${fileBasenameNoExtention}.out",
             "group": {
