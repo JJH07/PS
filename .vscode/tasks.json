@@ -11,9 +11,9 @@
             "label": "[Win] build_gcc",
             "command": "gcc",
             "args": [
-                "$(file)",
+                "${file}",
                 "-o",
-                "$(fileDirname)/$(fileBasenameNoExtention}"
+                "${fileDirname}/${fileBasenameNoExtension}"
             ],
             "group": "build",
             "problemMatcher": {
@@ -22,7 +22,7 @@
                     "$(workspaceRoot}"
                 ],
                 "pattern": {
-                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning error):\\s+(.*)$",
                     "file": 1,
                     "line": 2,
                     "column": 3,
@@ -35,9 +35,9 @@
             "label": "[Win] build_g++",
             "command": "g++",
             "args": [
-                "$(file)",
+                "${file}",
                 "-o",
-                "$(fileDirname)/$(fileBasenameNoExtention}"
+                "${fileDirname}/${fileBasenameNoExtension}"
             ],
             "group": {
                 "kind": "build",
@@ -49,7 +49,7 @@
                     "$(workspaceRoot}"
                 ],
                 "pattern": {
-                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning error):\\s+(.*)$",
                     "file": 1,
                     "line": 2,
                     "column": 3,
@@ -60,12 +60,14 @@
         },
         {
             "label": "[Win] execute",
-            "command": "cmd",
-            "group": "test",
-            "args": [
-                "/C", "$(fileDirname)\\$(fileBasenameNoExtension}"
-            ]
+            "command": "${fileDirname}\\${fileBasenameNoExtension}",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
         },
+
+
         {
             "label": "[LINUX] build_gcc",
             "type": "shell",
@@ -111,10 +113,9 @@
         },
         {
             "label": "[LINUX] exec",
-            "type": "shell",
             "command": "${fileDirname}/${fileBasenameNoExtention}.out",
             "group": {
-                "kind": "build",
+                "kind": "test",
                 "isDefault": true
             }
         }
