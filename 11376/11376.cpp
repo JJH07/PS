@@ -45,6 +45,7 @@ int main()
     {
         std::memset(check, 0, sizeof(check));
         cnt += dfs(i);   
+        std::memset(check, 0, sizeof(check));
         cnt += dfs(i);
     }
     std::cout << cnt << '\n';
