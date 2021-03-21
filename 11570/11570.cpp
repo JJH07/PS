@@ -15,9 +15,9 @@ ll solve(int now, int S, int H)
     {
         return ret;
     }
-    ll val_S = (S == 0 ? 0 : std::abs(list[S] - list[now]));
-    ll val_H = (H == 0 ? 0 : std::abs(list[H] - list[now]));
-    return ret = std::min(val_S + solve(now + 1, now, H), val_H + solve(now + 1, S, now));
+    ll nS = (S == 0 ? 0 : std::abs(list[S] - list[now])) + solve(now + 1, now, H);
+    ll nH = (H == 0 ? 0 : std::abs(list[H] - list[now])) + solve(now + 1, S, now);
+    return ret = std::min(nS, nH);
 }
 int main()
 {
