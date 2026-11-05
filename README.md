@@ -8,11 +8,10 @@
 |---|---|
 | [BOJ/](BOJ/) | 숫자 문제 번호별 소스 657개, 서로 다른 번호 643개 |
 | [Codeforces/](Codeforces/) | 기존 CF 대회 폴더 7개, 소스 40개 |
-| [Unclassified/](Unclassified/) | 문제 번호를 확인하지 못한 소스 1개 |
 | [archive/xcode/](archive/xcode/) | 원래 경로를 보존한 Xcode 관련 파일 275개 |
 | [archive/vscode/](archive/vscode/) | 원래 경로를 보존한 VS Code 설정 7개 |
 
-기존 파일 1,430개(소스 698개, 실행파일 후보 450개, 설정 282개)를 보존했습니다. 이 README는 정리 과정에서 추가했습니다.
+현재 소스 697개, 실행파일 후보 450개, 설정 282개와 이 README를 포함해 총 1,430개 파일이 있습니다.
 
 ## 정리 규칙
 
@@ -20,7 +19,7 @@
 - 숫자 문제의 main.cpp는 문제번호.cpp로, .CPP는 .cpp로 통일했습니다.
 - 같은 문제가 여러 기존 영역에 있으면 root, old20_1 등 출처별 하위 폴더로 구분합니다. 대표 버전이나 최신 버전을 지정하지 않습니다.
 - _dp, _fenwick, _grundy, _2 등 풀이 변형 이름을 유지합니다.
-- 파일명 기반 대응이며 실제 실행파일이 해당 소스에서 빌드되었는지는 검증하지 않았습니다. 소스 449개에 대응 실행파일이 있고 249개에는 없습니다. 19538은 실행파일이 두 개입니다.
+- 파일명 기반 대응이며 실제 실행파일이 해당 소스에서 빌드되었는지는 검증하지 않았습니다. 소스 449개에 대응 실행파일이 있고 248개에는 없습니다. 19538은 실행파일이 두 개입니다.
 - archive는 설정 보관용입니다. 재배치 후 Xcode 프로젝트 및 VS Code 실행·빌드 설정을 사용하려면 내부 경로를 점검해야 합니다.
 - 문제 분류는 기존 경로 이름을 기준으로 했으며, 문제 제목·알고리즘·정답 여부는 확인하지 않았습니다. CF 번호는 기존 폴더 이름을 유지합니다.
 
@@ -686,6 +685,3 @@
 | [CF690](Codeforces/CF690/) | [A.cpp](Codeforces/CF690/A.cpp)<br>[B.cpp](Codeforces/CF690/B.cpp)<br>[C.cpp](Codeforces/CF690/C.cpp)<br>[D.cpp](Codeforces/CF690/D.cpp)<br>[E1.cpp](Codeforces/CF690/E1.cpp)<br>[E2.cpp](Codeforces/CF690/E2.cpp)<br>[F.cpp](Codeforces/CF690/F.cpp) | [A.exe](Codeforces/CF690/A.exe)<br>[B.exe](Codeforces/CF690/B.exe)<br>[C.exe](Codeforces/CF690/C.exe)<br>[D.exe](Codeforces/CF690/D.exe)<br>[E1.exe](Codeforces/CF690/E1.exe)<br>[E2](Codeforces/CF690/E2)<br>[F](Codeforces/CF690/F) |
 | [CF693](Codeforces/CF693/) | [A.cpp](Codeforces/CF693/A.cpp)<br>[B.cpp](Codeforces/CF693/B.cpp)<br>[C.cpp](Codeforces/CF693/C.cpp)<br>[D.cpp](Codeforces/CF693/D.cpp)<br>[E.cpp](Codeforces/CF693/E.cpp) | [A.exe](Codeforces/CF693/A.exe)<br>[B.exe](Codeforces/CF693/B.exe)<br>[C.exe](Codeforces/CF693/C.exe)<br>[D.exe](Codeforces/CF693/D.exe)<br>[E.exe](Codeforces/CF693/E.exe) |
 
-## 미분류
-
-- [Unclassified/codeforce/main.cpp](Unclassified/codeforce/main.cpp): 기존 경로 `old20_2/codeforce/codeforce/main.cpp`. 문제 번호를 확인한 뒤 분류합니다.
