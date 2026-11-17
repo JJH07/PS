@@ -1,33 +1,33 @@
 #include <iostream>
 #include <cmath>
-#define MAX 20
-typedef std::pair<int, int> pii;
-int n;
-double ans;
-pii list[MAX], tot, P;
-pii operator+(const pii &a, const pii &b)
+#define MAX_POINTS 20
+typedef std::pair<int, int> Point;
+int pointCount;
+double minimumLength;
+Point points[MAX_POINTS], totalSum, selectedSum;
+Point operator+(const Point &a, const Point &b)
 {
     return {a.first + b.first, a.second + b.second};
 }
-pii operator-(const pii &a, const pii &b)
+Point operator-(const Point &a, const Point &b)
 {
     return {a.first - b.first, a.second - b.second};
 }
-double get_dist(const pii &a)
+double vectorLength(const Point &a)
 {
     return sqrt(1LL * a.first * a.first + 1LL * a.second * a.second);
 }
-void pick(int picked, int idx, pii P)
+void choosePositivePoints(int selectedCount, int nextIndex, Point selectedSum)
 {
-    if(picked == n / 2)
+    if(selectedCount == pointCount / 2)
     {
-        ans = std::min(ans, get_dist(P - (tot - P)));
+        minimumLength = std::min(minimumLength, vectorLength(selectedSum - (totalSum - selectedSum)));
     }
     else
     {
-        for(int i = idx; i < n; i++)
+        for(int i = nextIndex; i < pointCount; i++)
         {
-            pick(picked + 1, i + 1, P + list[i]);
+            choosePositivePoints(selectedCount + 1, i + 1, selectedSum + points[i]);
         }
     }
 }
@@ -37,22 +37,22 @@ int main()
     std::cin.tie(NULL);
     std::cout << std::fixed;
     std::cout.precision(12);
-    int t;
-    std::cin >> t;
-    while(t--)
+    int testCaseCount;
+    std::cin >> testCaseCount;
+    while(testCaseCount--)
     {
-        tot = {0, 0};
-        P = {0, 0};
-        ans = 1e9;
-        std::cin >> n;
-        for(int i = 0; i < n; i++)
+        totalSum = {0, 0};
+        selectedSum = {0, 0};
+        minimumLength = 1e9;
+        std::cin >> pointCount;
+        for(int i = 0; i < pointCount; i++)
         {
-            std::cin >> list[i].first >> list[i].second;
-            tot.first += list[i].first;
-            tot.second += list[i].second;
+            std::cin >> points[i].first >> points[i].second;
+            totalSum.first += points[i].first;
+            totalSum.second += points[i].second;
         }
-        pick(0, 0, {0, 0});
-        std::cout << ans << '\n';
+        choosePositivePoints(0, 0, {0, 0});
+        std::cout << minimumLength << '\n';
     }
     return 0;
 }

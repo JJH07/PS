@@ -1,51 +1,51 @@
 #include <iostream>
 #include <queue>
-int Find(std::deque<int> &dq, int number)
+int rotateAndRemove(std::deque<int> &values, int targetValue)
 {
-    int sz = (int)dq.size();
-    int pos;
-    for(pos = 0; pos < sz; pos++)
+    int queueSize = (int)values.size();
+    int targetIndex;
+    for(targetIndex = 0; targetIndex < queueSize; targetIndex++)
     {
-        if(dq[pos] == number)
+        if(values[targetIndex] == targetValue)
         {
             break;
         }
     }
-    int ret = std::min(pos, sz - pos);
-    for(int i = 0; i < ret; i++)
+    int rotationCount = std::min(targetIndex, queueSize - targetIndex);
+    for(int i = 0; i < rotationCount; i++)
     {
-        if(pos < sz - pos)
+        if(targetIndex < queueSize - targetIndex)
         {
-            dq.push_back(dq.front());
-            dq.pop_front();
+            values.push_back(values.front());
+            values.pop_front();
         }
         else
         {
-            dq.push_front(dq.back());
-            dq.pop_back();
+            values.push_front(values.back());
+            values.pop_back();
         }
     }
-    dq.pop_front();
-    return ret;
+    values.pop_front();
+    return rotationCount;
 }
 int main()
 {
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
 
-    int n, m, ans = 0;
-    std::deque<int> deq;
-    std::cin >> n >> m;
-    for(int i = 1; i <= n; i++)
+    int initialSize, targetCount, totalRotations = 0;
+    std::deque<int> values;
+    std::cin >> initialSize >> targetCount;
+    for(int i = 1; i <= initialSize; i++)
     {
-        deq.push_back(i);
+        values.push_back(i);
     }
-    while(m--)
+    while(targetCount--)
     {
-        int number;
-        std::cin >> number;
-        ans += Find(deq, number);
+        int targetValue;
+        std::cin >> targetValue;
+        totalRotations += rotateAndRemove(values, targetValue);
     }   
-    std::cout << ans << '\n';
+    std::cout << totalRotations << '\n';
     return 0;
 }

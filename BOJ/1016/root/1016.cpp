@@ -1,34 +1,34 @@
 #include <bits/stdc++.h>
 typedef long long ll;
-int nonsqrt[1000001];
+int hasSquareFactor[1000001];
 
 int main()
 {
     std::ios::sync_with_stdio(false);
     std::cin.tie(NULL);
     
-    ll mn, mx, ans = 0;
-    std::cin >> mn >> mx;
+    ll rangeStart, rangeEnd, squareFreeCount = 0;
+    std::cin >> rangeStart >> rangeEnd;
     
-    for(ll c = 2; c * c <= mx; c++)
+    for(ll divisor = 2; divisor * divisor <= rangeEnd; divisor++)
     {
-        ll len = mx / (c * c);
-        for(long long p = mn / (c * c); p <= len; p++)
+        ll lastMultipleIndex = rangeEnd / (divisor * divisor);
+        for(long long multipleIndex = rangeStart / (divisor * divisor); multipleIndex <= lastMultipleIndex; multipleIndex++)
         {
-            ll val = p * (c * c);
-            if(val >= mn && val <= mx)
+            ll multipleValue = multipleIndex * (divisor * divisor);
+            if(multipleValue >= rangeStart && multipleValue <= rangeEnd)
             {
-                nonsqrt[val - mn] = true;
+                hasSquareFactor[multipleValue - rangeStart] = true;
             }
         }
     }
-    for(int i = 0; i < mx - mn + 1; i++)
+    for(int i = 0; i < rangeEnd - rangeStart + 1; i++)
     {
-        if(nonsqrt[i] == 0)
+        if(hasSquareFactor[i] == 0)
         {
-            ans++;
+            squareFreeCount++;
         }
     }
-    std::cout << ans << '\n';
+    std::cout << squareFreeCount << '\n';
     return 0;
 }

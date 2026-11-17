@@ -15,33 +15,33 @@ int main(int argc, const char * argv[]) {
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
     
-    bool visited[1000001];
-    long long mn, mx, cnt = 0;
+    bool hasSquareFactor[1000001];
+    long long rangeStart, rangeEnd, squareFreeCount = 0;
     for(int i = 0; i < 1000001; i++)
     {
-        visited[i] = false;
+        hasSquareFactor[i] = false;
     }
-    std::cin >> mn >> mx;
+    std::cin >> rangeStart >> rangeEnd;
     
-    for(long long c = 2; c * c <= mx; c++)
+    for(long long divisor = 2; divisor * divisor <= rangeEnd; divisor++)
     {
-        long long len = mx / (c * c);
-        for(long long p = mn / (c * c); p <= len; p++)
+        long long lastMultipleIndex = rangeEnd / (divisor * divisor);
+        for(long long multipleIndex = rangeStart / (divisor * divisor); multipleIndex <= lastMultipleIndex; multipleIndex++)
         {
-            long long val = p * (c * c);
-            if(val >= mn && val <= mx)
+            long long multipleValue = multipleIndex * (divisor * divisor);
+            if(multipleValue >= rangeStart && multipleValue <= rangeEnd)
             {
-                visited[val - mn] = true;
+                hasSquareFactor[multipleValue - rangeStart] = true;
             }
         }
     }
-    for(int i = 0; i < mx - mn + 1; i++)
+    for(int i = 0; i < rangeEnd - rangeStart + 1; i++)
     {
-        if(visited[i] == false)
+        if(hasSquareFactor[i] == false)
         {
-            cnt++;
+            squareFreeCount++;
         }
     }
-    std::cout << cnt << '\n';
+    std::cout << squareFreeCount << '\n';
     return 0;
 }

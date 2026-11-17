@@ -2,52 +2,52 @@
 #include <vector>
 #include <cstring>
 
-int building[1001], dp[1001];
-std::vector<int> prerequisite[1001];
-int construct(int idx)
+int buildTime[1001], completionTime[1001];
+std::vector<int> prerequisites[1001];
+int getCompletionTime(int buildingId)
 {
-    int &ret = dp[idx];
-    if(ret != -1)
+    int &cachedTime = completionTime[buildingId];
+    if(cachedTime != -1)
     {
-        return ret;
+        return cachedTime;
     }
-    ret = building[idx];
-    for(auto x : prerequisite[idx])
+    cachedTime = buildTime[buildingId];
+    for(auto prerequisiteId : prerequisites[buildingId])
     {
-        ret = std::max(ret, building[idx] + construct(x));
+        cachedTime = std::max(cachedTime, buildTime[buildingId] + getCompletionTime(prerequisiteId));
     }
-    return ret;
+    return cachedTime;
 }
 int main()
 {
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
 
-    int T;
-    std::cin >> T;
-    while(T--)
+    int testCaseCount;
+    std::cin >> testCaseCount;
+    while(testCaseCount--)
     {
-        int n, k, W;
-        std::cin >> n >> k;
+        int buildingCount, ruleCount, targetBuilding;
+        std::cin >> buildingCount >> ruleCount;
 
-        for(int i = 1; i <= n; i++)
+        for(int i = 1; i <= buildingCount; i++)
         {
-            prerequisite[i].clear();
+            prerequisites[i].clear();
         }
-        std::memset(dp, -1, sizeof(dp));
+        std::memset(completionTime, -1, sizeof(completionTime));
 
-        for(int i = 1; i <= n; i++)
+        for(int i = 1; i <= buildingCount; i++)
         {
-            std::cin >> building[i];
+            std::cin >> buildTime[i];
         }
-        for(int i = 0; i < k; i++)
+        for(int i = 0; i < ruleCount; i++)
         {
-            int X, Y;
-            std::cin >> X >> Y;
-            prerequisite[Y].push_back(X);
+            int prerequisiteBuilding, dependentBuilding;
+            std::cin >> prerequisiteBuilding >> dependentBuilding;
+            prerequisites[dependentBuilding].push_back(prerequisiteBuilding);
         }
-        std::cin >> W;
-        std::cout << construct(W) << '\n';
+        std::cin >> targetBuilding;
+        std::cout << getCompletionTime(targetBuilding) << '\n';
     }
     return 0;
 }

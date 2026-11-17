@@ -14,38 +14,38 @@ int main(int argc, const char * argv[]) {
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
     
-    int N, L, s = -1, e = -1;
+    int targetSum, minimumLength, firstTerm = -1, lastTerm = -1;
     
-    std::cin >> N >> L;
+    std::cin >> targetSum >> minimumLength;
     
-    for(int i = L; i <= N + 1; i++)
+    for(int length = minimumLength; length <= targetSum + 1; length++)
     {
-        if(i > 100)
+        if(length > 100)
         {
             break;
         }
-        if(i % 2 == 1 && N % i == 0)
+        if(length % 2 == 1 && targetSum % length == 0)
         {
-            s = (N / i) - i / 2;
-            e = (N / i) + i / 2;
+            firstTerm = (targetSum / length) - length / 2;
+            lastTerm = (targetSum / length) + length / 2;
             break;
         }
-        else if(i % 2 == 0 && i / 2 == N % i)
+        else if(length % 2 == 0 && length / 2 == targetSum % length)
         {
-            s = N / i - (i - 1) / 2;
-            e = N / i + i / 2;
+            firstTerm = targetSum / length - (length - 1) / 2;
+            lastTerm = targetSum / length + length / 2;
             break;
         }
     }
-    if(s < 0)
+    if(firstTerm < 0)
     {
         std::cout << "-1\n";
     }
     else
     {
-        for(int i = s; i <= e; i++)
+        for(int term = firstTerm; term <= lastTerm; term++)
         {
-            std::cout << i << ' ';
+            std::cout << term << ' ';
         }
         std::cout << '\n';
     }

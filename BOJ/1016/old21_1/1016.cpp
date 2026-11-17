@@ -1,34 +1,34 @@
 #include <iostream>
-#define MAX 1000100
+#define MOBIUS_LIMIT 1000100
 typedef long long ll;
-ll t[MAX];
-void init()
+ll mobius[MOBIUS_LIMIT];
+void initializeMobius()
 {
-    t[1] = 1;
-    for(int i = 1; i < MAX; i++)
+    mobius[1] = 1;
+    for(int divisor = 1; divisor < MOBIUS_LIMIT; divisor++)
     {
-        for(int j = 2 * i; j < MAX; j += i)
+        for(int multiple = 2 * divisor; multiple < MOBIUS_LIMIT; multiple += divisor)
         {
-            t[j] -= t[i];
+            mobius[multiple] -= mobius[divisor];
         }
     }
 }
-ll func(ll n)
+ll countSquareFreeUpTo(ll upperBound)
 {
-    ll ret = 0;
-    for(ll i = 1; i * i <= n; i++)
+    ll squareFreeCount = 0;
+    for(ll divisor = 1; divisor * divisor <= upperBound; divisor++)
     {
-        ret += t[i] * (n / (i * i));
+        squareFreeCount += mobius[divisor] * (upperBound / (divisor * divisor));
     }
-    return ret;
+    return squareFreeCount;
 }
 int main()
 {
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
-    init();
-    ll Min, Max;
-    std::cin >> Min >> Max;
-    std::cout << func(Max) - func(Min - 1) << '\n';
+    initializeMobius();
+    ll rangeStart, rangeEnd;
+    std::cin >> rangeStart >> rangeEnd;
+    std::cout << countSquareFreeUpTo(rangeEnd) - countSquareFreeUpTo(rangeStart - 1) << '\n';
     return 0;
 }

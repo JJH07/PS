@@ -10,95 +10,95 @@
 #include <vector>
 #include <cstring>
 
-int strict[2][10001], dp[10001][2][2];
-int n, w;
-int solve(int idx, int in, int out)
+int enemyCounts[2][10001], minSquadMemo[10001][2][2];
+int columnCount, squadCapacity;
+int minSquadsFrom(int column, int needsInnerCoverage, int needsOuterCoverage)
 {
-    if(idx > n)
+    if(column > columnCount)
     {
         return 0;
     }
-    int &ret = dp[idx][in][out];
-    if(ret != -1)
+    int &cachedMinimum = minSquadMemo[column][needsInnerCoverage][needsOuterCoverage];
+    if(cachedMinimum != -1)
     {
-        return ret;
+        return cachedMinimum;
     }
-    bool flag_in = false, flag_out = false;
-    ret = in + out + solve(idx + 1, 1, 1);
-    if(in && out && strict[0][idx] + strict[1][idx] <= w)
+    bool canPairInnerHorizontally = false, canPairOuterHorizontally = false;
+    cachedMinimum = needsInnerCoverage + needsOuterCoverage + minSquadsFrom(column + 1, 1, 1);
+    if(needsInnerCoverage && needsOuterCoverage && enemyCounts[0][column] + enemyCounts[1][column] <= squadCapacity)
     {
-        ret = std::min(ret, 1 + solve(idx + 1, 1, 1));
+        cachedMinimum = std::min(cachedMinimum, 1 + minSquadsFrom(column + 1, 1, 1));
     }
-    if(in && idx + 1 <= n && strict[0][idx] + strict[0][idx + 1] <= w)
+    if(needsInnerCoverage && column + 1 <= columnCount && enemyCounts[0][column] + enemyCounts[0][column + 1] <= squadCapacity)
     {
-        ret = std::min(ret, in + out + solve(idx + 1, 0, 1));
-        flag_in = true;
+        cachedMinimum = std::min(cachedMinimum, needsInnerCoverage + needsOuterCoverage + minSquadsFrom(column + 1, 0, 1));
+        canPairInnerHorizontally = true;
     }
-    if(out && idx + 1 <= n && strict[1][idx] + strict[1][idx + 1] <= w)
+    if(needsOuterCoverage && column + 1 <= columnCount && enemyCounts[1][column] + enemyCounts[1][column + 1] <= squadCapacity)
     {
-        ret = std::min(ret, in + out + solve(idx + 1, 1, 0));
-        flag_out = true;
+        cachedMinimum = std::min(cachedMinimum, needsInnerCoverage + needsOuterCoverage + minSquadsFrom(column + 1, 1, 0));
+        canPairOuterHorizontally = true;
     }
-    if(flag_in && flag_out)
+    if(canPairInnerHorizontally && canPairOuterHorizontally)
     {
-        ret = std::min(ret, 2 + solve(idx + 1, 0, 0));
+        cachedMinimum = std::min(cachedMinimum, 2 + minSquadsFrom(column + 1, 0, 0));
     }
-    return ret;
+    return cachedMinimum;
 }
 int main(int argc, const char * argv[]) {
     // insert code here...
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
     
-    int t, ans, keep_s[2], keep_e[2];
+    int testCaseCount, minimumSquads, firstColumnEnemies[2], lastColumnEnemies[2];
     
-    std::cin >> t;
-    while(t--)
+    std::cin >> testCaseCount;
+    while(testCaseCount--)
     {
-        std::cin >> n >> w;
+        std::cin >> columnCount >> squadCapacity;
         for(int i = 0; i < 2; i++)
         {
-            for(int j = 1; j <= n; j++)
+            for(int j = 1; j <= columnCount; j++)
             {
-                std::cin >> strict[i][j];
+                std::cin >> enemyCounts[i][j];
             }
         }
-        std::memset(dp, -1, sizeof(dp));
-        ans = solve(1, 1, 1);
+        std::memset(minSquadMemo, -1, sizeof(minSquadMemo));
+        minimumSquads = minSquadsFrom(1, 1, 1);
         
-        if(n > 1)
+        if(columnCount > 1)
         {
-            keep_s[0] = strict[0][1];
-            keep_s[1] = strict[1][1];
-            keep_e[0] = strict[0][n];
-            keep_e[1] = strict[1][n];
-            if(keep_s[0] + keep_e[0] <= w)
+            firstColumnEnemies[0] = enemyCounts[0][1];
+            firstColumnEnemies[1] = enemyCounts[1][1];
+            lastColumnEnemies[0] = enemyCounts[0][columnCount];
+            lastColumnEnemies[1] = enemyCounts[1][columnCount];
+            if(firstColumnEnemies[0] + lastColumnEnemies[0] <= squadCapacity)
             {
-                strict[0][1] = w;
-                strict[0][n] = w;
-                std::memset(dp, -1, sizeof(dp));
-                ans = std::min(ans, solve(1, 0, 1));
+                enemyCounts[0][1] = squadCapacity;
+                enemyCounts[0][columnCount] = squadCapacity;
+                std::memset(minSquadMemo, -1, sizeof(minSquadMemo));
+                minimumSquads = std::min(minimumSquads, minSquadsFrom(1, 0, 1));
             }
-            if(keep_s[1] + keep_e[1] <= w)
+            if(firstColumnEnemies[1] + lastColumnEnemies[1] <= squadCapacity)
             {
-                strict[0][1] = keep_s[0];
-                strict[0][n] = keep_e[0];
-                strict[1][1] = w;
-                strict[1][n] = w;
-                std::memset(dp, -1, sizeof(dp));
-                ans = std::min(ans, solve(1, 1, 0));
+                enemyCounts[0][1] = firstColumnEnemies[0];
+                enemyCounts[0][columnCount] = lastColumnEnemies[0];
+                enemyCounts[1][1] = squadCapacity;
+                enemyCounts[1][columnCount] = squadCapacity;
+                std::memset(minSquadMemo, -1, sizeof(minSquadMemo));
+                minimumSquads = std::min(minimumSquads, minSquadsFrom(1, 1, 0));
             }
-            if(keep_s[0] + keep_e[0] <= w && keep_s[1] + keep_e[1] <= w)
+            if(firstColumnEnemies[0] + lastColumnEnemies[0] <= squadCapacity && firstColumnEnemies[1] + lastColumnEnemies[1] <= squadCapacity)
             {
-                strict[0][1] = w;
-                strict[0][n] = w;
-                strict[1][1] = w;
-                strict[1][n] = w;
-                std::memset(dp, -1, sizeof(dp));
-                ans = std::min(ans, solve(1, 0, 0));
+                enemyCounts[0][1] = squadCapacity;
+                enemyCounts[0][columnCount] = squadCapacity;
+                enemyCounts[1][1] = squadCapacity;
+                enemyCounts[1][columnCount] = squadCapacity;
+                std::memset(minSquadMemo, -1, sizeof(minSquadMemo));
+                minimumSquads = std::min(minimumSquads, minSquadsFrom(1, 0, 0));
             }
         }
-        std::cout << ans << '\n';
+        std::cout << minimumSquads << '\n';
     }
     return 0;
 }

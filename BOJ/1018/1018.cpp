@@ -1,56 +1,56 @@
 #include <iostream>
 #include <string>
-typedef std::pair<int, int> pii;
-int n, m;
-std::string map[50];
-int count(int sX, int sY)
+typedef std::pair<int, int> Point;
+int rowCount, columnCount;
+std::string board[50];
+int countRepaints(int startRow, int startColumn)
 {
-    int WB = 0, BW = 0;
-    for(int x = sX; x < sX + 8; x++)
+    int patternMismatches = 0, inversePatternMismatches = 0;
+    for(int row = startRow; row < startRow + 8; row++)
     {
-        for(int y = sY; y < sY + 8; y += 2)
+        for(int column = startColumn; column < startColumn + 8; column += 2)
         {
-            if(x % 2)
+            if(row % 2)
             {
-                map[x][y] == 'W' ? ++WB : ++BW;
+                board[row][column] == 'W' ? ++patternMismatches : ++inversePatternMismatches;
             }
             else
             {
-                map[x][y] == 'W' ? ++BW : ++WB;
+                board[row][column] == 'W' ? ++inversePatternMismatches : ++patternMismatches;
             }
         }
-        for(int y = sY + 1; y < sY + 8; y += 2)
+        for(int column = startColumn + 1; column < startColumn + 8; column += 2)
         {
-            if(x % 2)
+            if(row % 2)
             {
-                map[x][y] == 'B' ? ++WB : ++BW;
+                board[row][column] == 'B' ? ++patternMismatches : ++inversePatternMismatches;
             }
             else
             {
-                map[x][y] == 'B' ? ++BW : ++WB;
+                board[row][column] == 'B' ? ++inversePatternMismatches : ++patternMismatches;
             }
         }
     }
-    return std::min(WB, BW);
+    return std::min(patternMismatches, inversePatternMismatches);
 }
 int main()
 {
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
 
-    int ans = 2501;
-    std::cin >> n >> m;
-    for(int i = 0; i < n; i++)
+    int minimumRepaints = 2501;
+    std::cin >> rowCount >> columnCount;
+    for(int i = 0; i < rowCount; i++)
     {
-        std::cin >> map[i];
+        std::cin >> board[i];
     }
-    for(int i = 0; i <= n - 8; i++)
+    for(int i = 0; i <= rowCount - 8; i++)
     {
-        for(int j = 0; j <= m - 8; j++)
+        for(int j = 0; j <= columnCount - 8; j++)
         {
-            ans = std::min(ans, count(i, j));
+            minimumRepaints = std::min(minimumRepaints, countRepaints(i, j));
         }
     }
-    std::cout << ans << '\n';
+    std::cout << minimumRepaints << '\n';
     return 0;
 }

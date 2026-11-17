@@ -15,53 +15,53 @@ int main(int argc, const char * argv[]) {
     std::cin.sync_with_stdio(false);
     std::cin.tie(NULL);
     
-    int n, tmp, max_step = 1, count[10];
+    int lastPage, remainingDigits, placeValueLimit = 1, digitCounts[10];
     
-    std::fill(count, count + 10, 0);
+    std::fill(digitCounts, digitCounts + 10, 0);
     
-    std::cin >> n;
+    std::cin >> lastPage;
     
-    tmp = n;
-    while(tmp > 0)
+    remainingDigits = lastPage;
+    while(remainingDigits > 0)
     {
-        max_step *= 10;
-        tmp /= 10;
+        placeValueLimit *= 10;
+        remainingDigits /= 10;
     }
     
-    for(int step = 1; step < max_step; step *= 10)
+    for(int placeValue = 1; placeValue < placeValueLimit; placeValue *= 10)
     {
-        int left = n / step / 10;
-        int mid = n / step % 10;
-        int right = n % step;
+        int higherDigits = lastPage / placeValue / 10;
+        int currentDigit = lastPage / placeValue % 10;
+        int lowerDigits = lastPage % placeValue;
         
-        if(left == 0)
+        if(higherDigits == 0)
         {
-            for(int i = 1; i < mid; i++)
+            for(int i = 1; i < currentDigit; i++)
             {
-                count[i] += step;
+                digitCounts[i] += placeValue;
             }
-            count[mid] += right + 1;
+            digitCounts[currentDigit] += lowerDigits + 1;
         }
         else
         {
             for(int i = 1; i <= 9; i++)
             {
-                count[i] += step;
+                digitCounts[i] += placeValue;
             }
             for(int i = 0; i <= 9; i++)
             {
-                count[i] += (left - 1) * step;
+                digitCounts[i] += (higherDigits - 1) * placeValue;
             }
-            for(int i = 0; i < mid; i++)
+            for(int i = 0; i < currentDigit; i++)
             {
-                count[i] += step;
+                digitCounts[i] += placeValue;
             }
-            count[mid] += right + 1;
+            digitCounts[currentDigit] += lowerDigits + 1;
         }
     }
     for(int i = 0; i < 10; i++)
     {
-        std::cout << count[i] << ' ';
+        std::cout << digitCounts[i] << ' ';
     }
     std::cout << '\n';
     return 0;
