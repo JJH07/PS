@@ -1,7 +1,6 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
-#include <cmath>
 #include <vector>
 #define VALUE_ARRAY_SIZE 1001
 
@@ -30,7 +29,7 @@ bool tryMatchOdd(int oddValue)
 int main()
 {
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
     for(int i = 2; i <= 2000; i++)
     {
@@ -43,9 +42,9 @@ int main()
         }
     }
 
-    int firstValue;
+    int firstValue = 0;
     std::vector<int> oddValues, evenValues, possiblePartners;
-    
+
     std::cin >> valueCount;
     for(int i = 0; i < valueCount; i++)
     {

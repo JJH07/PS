@@ -1,6 +1,7 @@
+#include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <vector>
-#include <cstring>
 
 int buildTime[1001], completionTime[1001];
 std::vector<int> prerequisites[1001];
@@ -21,7 +22,7 @@ int getCompletionTime(int buildingId)
 int main()
 {
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
     int testCaseCount;
     std::cin >> testCaseCount;

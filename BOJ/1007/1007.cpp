@@ -1,10 +1,12 @@
-#include <iostream>
+#include <algorithm>
 #include <cmath>
+#include <iostream>
+#include <utility>
 #define MAX_POINTS 20
 typedef std::pair<int, int> Point;
 int pointCount;
 double minimumLength;
-Point points[MAX_POINTS], totalSum, selectedSum;
+Point points[MAX_POINTS], totalSum;
 Point operator+(const Point &a, const Point &b)
 {
     return {a.first + b.first, a.second + b.second};
@@ -15,7 +17,7 @@ Point operator-(const Point &a, const Point &b)
 }
 double vectorLength(const Point &a)
 {
-    return sqrt(1LL * a.first * a.first + 1LL * a.second * a.second);
+    return std::sqrt(1LL * a.first * a.first + 1LL * a.second * a.second);
 }
 void choosePositivePoints(int selectedCount, int nextIndex, Point selectedSum)
 {
@@ -25,7 +27,8 @@ void choosePositivePoints(int selectedCount, int nextIndex, Point selectedSum)
     }
     else
     {
-        for(int i = nextIndex; i < pointCount; i++)
+        const int remainingCount = pointCount / 2 - selectedCount;
+        for(int i = nextIndex; i <= pointCount - remainingCount; i++)
         {
             choosePositivePoints(selectedCount + 1, i + 1, selectedSum + points[i]);
         }
@@ -34,7 +37,7 @@ void choosePositivePoints(int selectedCount, int nextIndex, Point selectedSum)
 int main()
 {
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
     std::cout << std::fixed;
     std::cout.precision(12);
     int testCaseCount;
@@ -42,7 +45,6 @@ int main()
     while(testCaseCount--)
     {
         totalSum = {0, 0};
-        selectedSum = {0, 0};
         minimumLength = 1e9;
         std::cin >> pointCount;
         for(int i = 0; i < pointCount; i++)
@@ -51,7 +53,8 @@ int main()
             totalSum.first += points[i].first;
             totalSum.second += points[i].second;
         }
-        choosePositivePoints(0, 0, {0, 0});
+        // Complementary selections produce opposite vectors of equal length.
+        choosePositivePoints(1, 1, points[0]);
         std::cout << minimumLength << '\n';
     }
     return 0;

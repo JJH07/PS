@@ -1,0 +1,19 @@
+# Compiler outputs; keep source files and the existing problem directories.
+*.exe
+*.out
+*.o
+*.obj
+*.bin
+__pycache__/
+
+# Extensionless executables for the reviewed BOJ problems.
+/BOJ/1005/1005
+/BOJ/1006/1006
+/BOJ/1007/1007
+/BOJ/1016/1016
+/BOJ/1017/1017
+/BOJ/1018/1018
+/BOJ/1019/1019
+/BOJ/1021/1021
+/BOJ/1022/1022
+/BOJ/1024/1024

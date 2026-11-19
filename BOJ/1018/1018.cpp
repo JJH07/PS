@@ -1,44 +1,30 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
-typedef std::pair<int, int> Point;
 int rowCount, columnCount;
 std::string board[50];
 int countRepaints(int startRow, int startColumn)
 {
-    int patternMismatches = 0, inversePatternMismatches = 0;
+    int patternMismatches = 0;
     for(int row = startRow; row < startRow + 8; row++)
     {
-        for(int column = startColumn; column < startColumn + 8; column += 2)
+        for(int column = startColumn; column < startColumn + 8; column++)
         {
-            if(row % 2)
+            const char expectedColor = ((row - startRow + column - startColumn) % 2 == 0) ? 'W' : 'B';
+            if(board[row][column] != expectedColor)
             {
-                board[row][column] == 'W' ? ++patternMismatches : ++inversePatternMismatches;
-            }
-            else
-            {
-                board[row][column] == 'W' ? ++inversePatternMismatches : ++patternMismatches;
-            }
-        }
-        for(int column = startColumn + 1; column < startColumn + 8; column += 2)
-        {
-            if(row % 2)
-            {
-                board[row][column] == 'B' ? ++patternMismatches : ++inversePatternMismatches;
-            }
-            else
-            {
-                board[row][column] == 'B' ? ++inversePatternMismatches : ++patternMismatches;
+                patternMismatches++;
             }
         }
     }
-    return std::min(patternMismatches, inversePatternMismatches);
+    return std::min(patternMismatches, 64 - patternMismatches);
 }
 int main()
 {
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
-    int minimumRepaints = 2501;
+    int minimumRepaints = 64;
     std::cin >> rowCount >> columnCount;
     for(int i = 0; i < rowCount; i++)
     {

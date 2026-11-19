@@ -1,5 +1,6 @@
+#include <algorithm>
+#include <deque>
 #include <iostream>
-#include <queue>
 int rotateAndRemove(std::deque<int> &values, int targetValue)
 {
     int queueSize = (int)values.size();
@@ -31,7 +32,7 @@ int rotateAndRemove(std::deque<int> &values, int targetValue)
 int main()
 {
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
     int initialSize, targetCount, totalRotations = 0;
     std::deque<int> values;
@@ -45,7 +46,7 @@ int main()
         int targetValue;
         std::cin >> targetValue;
         totalRotations += rotateAndRemove(values, targetValue);
-    }   
+    }
     std::cout << totalRotations << '\n';
     return 0;
 }

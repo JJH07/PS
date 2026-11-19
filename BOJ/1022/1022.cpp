@@ -1,86 +1,59 @@
-//
-//  main.cpp
-//  1022
-//
-//  Created by 진준호 on 2020/01/28.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
-#include <iostream>
 #include <algorithm>
-#include <cmath>
-int spiralValues[51][6], digitCounts[51][6], firstRow, firstColumn, lastRow, lastColumn, currentRow, currentColumn, outputWidth;
-int rowOffsets[4] = {0, -1, 0, 1}, columnOffsets[4] = {1, 0, -1, 0};
-bool isInsideOutputArea()
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+#include <string>
+
+long long spiralValueAt(int row, int column)
 {
-    if(currentRow >= 0 && currentRow <= lastRow && currentColumn >= 0 && currentColumn <= lastColumn)
+    const int radius = std::max(std::abs(row), std::abs(column));
+    const long long sideLength = 2LL * radius + 1;
+    const long long cornerValue = sideLength * sideLength;
+
+    // Each ring ends at its bottom-right corner: (radius, radius).
+    if(row == radius)
     {
-        return true;
+        return cornerValue - (radius - column);
     }
-    return false;
+    if(column == -radius)
+    {
+        return cornerValue - 2LL * radius - (radius - row);
+    }
+    if(row == -radius)
+    {
+        return cornerValue - 4LL * radius - (column + radius);
+    }
+    return cornerValue - 6LL * radius - (row + radius);
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
 
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int storedCellCountPlusOne = 1, currentValue = 1, legLength = 0, directionIndex = 0;
-    
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int firstRow, firstColumn, lastRow, lastColumn;
     std::cin >> firstRow >> firstColumn >> lastRow >> lastColumn;
-    
-    lastRow -= firstRow;
-    lastColumn -= firstColumn;
-    currentRow -= firstRow;
-    currentColumn -= firstColumn;
-    firstRow = 0;
-    firstColumn = 0;
 
-    if(isInsideOutputArea())
+    long long maximumValue = 0;
+    for(int row = firstRow; row <= lastRow; row++)
     {
-        spiralValues[currentRow][currentColumn] = currentValue;
-        storedCellCountPlusOne++;
-        outputWidth = 1;
-        digitCounts[currentRow][currentColumn] = 1;
-    }
-    currentValue++;
-    while(storedCellCountPlusOne <= (lastRow + 1) * (lastColumn + 1))
-    {
-        if(directionIndex % 2 == 0)
+        for(int column = firstColumn; column <= lastColumn; column++)
         {
-            legLength++;
+            maximumValue = std::max(maximumValue, spiralValueAt(row, column));
         }
-        for(int i = 1; i <= legLength; i++)
-        {
-            currentRow += rowOffsets[directionIndex];
-            currentColumn += columnOffsets[directionIndex];
-            if(isInsideOutputArea())
-            {
-                spiralValues[currentRow][currentColumn] = currentValue;
-                storedCellCountPlusOne++;
-                
-                int remainingDigits = currentValue, digitCount = 0;
-                while(remainingDigits > 0)
-                {
-                    digitCount++;
-                    remainingDigits /= 10;
-                }
-                digitCounts[currentRow][currentColumn] = digitCount;
-                outputWidth = digitCount;
-            }
-            currentValue++;
-        }
-        directionIndex = (directionIndex + 1) % 4;
     }
-    for(int i = 0; i <= lastRow; i++)
+    const int outputWidth = static_cast<int>(std::to_string(maximumValue).size());
+    for(int row = firstRow; row <= lastRow; row++)
     {
-        for(int j = 0; j <= lastColumn; j++)
+        for(int column = firstColumn; column <= lastColumn; column++)
         {
-            for(int k = 0; k < outputWidth - digitCounts[i][j]; k++)
+            if(column > firstColumn)
             {
                 std::cout << ' ';
             }
-            std::cout << spiralValues[i][j] << ' ';
+            std::cout << std::setw(outputWidth) << spiralValueAt(row, column);
         }
         std::cout << '\n';
     }

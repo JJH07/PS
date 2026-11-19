@@ -1,39 +1,32 @@
-//
-//  main.cpp
-//  1019
-//
-//  Created by 진준호 on 2020/01/15.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
 #include <algorithm>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
+int main()
+{
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int lastPage, remainingDigits, placeValueLimit = 1, digitCounts[10];
-    
+    std::cin.tie(nullptr);
+
+    long long lastPage, remainingDigits, placeValueLimit = 1, digitCounts[10];
+
     std::fill(digitCounts, digitCounts + 10, 0);
-    
+
     std::cin >> lastPage;
-    
+
     remainingDigits = lastPage;
     while(remainingDigits > 0)
     {
         placeValueLimit *= 10;
         remainingDigits /= 10;
     }
-    
-    for(int placeValue = 1; placeValue < placeValueLimit; placeValue *= 10)
+
+    for(long long placeValue = 1; placeValue < placeValueLimit; placeValue *= 10)
     {
-        int higherDigits = lastPage / placeValue / 10;
+        long long higherDigits = lastPage / placeValue / 10;
         int currentDigit = lastPage / placeValue % 10;
-        int lowerDigits = lastPage % placeValue;
-        
+        long long lowerDigits = lastPage % placeValue;
+
         if(higherDigits == 0)
         {
             for(int i = 1; i < currentDigit; i++)

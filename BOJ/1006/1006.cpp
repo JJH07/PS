@@ -1,57 +1,59 @@
-//
-//  main.cpp
-//  1006
-//
-//  Created by 진준호 on 2020/02/10.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
+#include <algorithm>
+#include <array>
 #include <iostream>
-#include <vector>
-#include <cstring>
 
-int enemyCounts[2][10001], minSquadMemo[10001][2][2];
+int enemyCounts[2][10001];
 int columnCount, squadCapacity;
-int minSquadsFrom(int column, int needsInnerCoverage, int needsOuterCoverage)
+
+int minSquadsFrom(int firstColumn, int needsInnerCoverage, int needsOuterCoverage)
 {
-    if(column > columnCount)
+    // A state bit is 1 if that cell still needs coverage, 0 if already covered.
+    std::array<std::array<int, 2>, 2> nextCosts{};
+    for(int column = columnCount; column >= firstColumn; column--)
     {
-        return 0;
+        std::array<std::array<int, 2>, 2> currentCosts{};
+        for(int inner = 0; inner <= 1; inner++)
+        {
+            for(int outer = 0; outer <= 1; outer++)
+            {
+                int minimum = inner + outer + nextCosts[1][1];
+                if(inner && outer && enemyCounts[0][column] + enemyCounts[1][column] <= squadCapacity)
+                {
+                    minimum = std::min(minimum, 1 + nextCosts[1][1]);
+                }
+                const bool canPairInner = inner && column < columnCount &&
+                    enemyCounts[0][column] + enemyCounts[0][column + 1] <= squadCapacity;
+                const bool canPairOuter = outer && column < columnCount &&
+                    enemyCounts[1][column] + enemyCounts[1][column + 1] <= squadCapacity;
+                if(canPairInner)
+                {
+                    minimum = std::min(minimum, inner + outer + nextCosts[0][1]);
+                }
+                if(canPairOuter)
+                {
+                    minimum = std::min(minimum, inner + outer + nextCosts[1][0]);
+                }
+                if(canPairInner && canPairOuter)
+                {
+                    minimum = std::min(minimum, 2 + nextCosts[0][0]);
+                }
+                currentCosts[inner][outer] = minimum;
+            }
+        }
+        nextCosts = currentCosts;
     }
-    int &cachedMinimum = minSquadMemo[column][needsInnerCoverage][needsOuterCoverage];
-    if(cachedMinimum != -1)
-    {
-        return cachedMinimum;
-    }
-    bool canPairInnerHorizontally = false, canPairOuterHorizontally = false;
-    cachedMinimum = needsInnerCoverage + needsOuterCoverage + minSquadsFrom(column + 1, 1, 1);
-    if(needsInnerCoverage && needsOuterCoverage && enemyCounts[0][column] + enemyCounts[1][column] <= squadCapacity)
-    {
-        cachedMinimum = std::min(cachedMinimum, 1 + minSquadsFrom(column + 1, 1, 1));
-    }
-    if(needsInnerCoverage && column + 1 <= columnCount && enemyCounts[0][column] + enemyCounts[0][column + 1] <= squadCapacity)
-    {
-        cachedMinimum = std::min(cachedMinimum, needsInnerCoverage + needsOuterCoverage + minSquadsFrom(column + 1, 0, 1));
-        canPairInnerHorizontally = true;
-    }
-    if(needsOuterCoverage && column + 1 <= columnCount && enemyCounts[1][column] + enemyCounts[1][column + 1] <= squadCapacity)
-    {
-        cachedMinimum = std::min(cachedMinimum, needsInnerCoverage + needsOuterCoverage + minSquadsFrom(column + 1, 1, 0));
-        canPairOuterHorizontally = true;
-    }
-    if(canPairInnerHorizontally && canPairOuterHorizontally)
-    {
-        cachedMinimum = std::min(cachedMinimum, 2 + minSquadsFrom(column + 1, 0, 0));
-    }
-    return cachedMinimum;
+    return nextCosts[needsInnerCoverage][needsOuterCoverage];
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
+
+int main()
+{
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
+    std::cin.tie(nullptr);
+
     int testCaseCount, minimumSquads, firstColumnEnemies[2], lastColumnEnemies[2];
-    
+
     std::cin >> testCaseCount;
     while(testCaseCount--)
     {
@@ -63,9 +65,9 @@ int main(int argc, const char * argv[]) {
                 std::cin >> enemyCounts[i][j];
             }
         }
-        std::memset(minSquadMemo, -1, sizeof(minSquadMemo));
         minimumSquads = minSquadsFrom(1, 1, 1);
-        
+
+        // For a wrap pair, skip its first cell and charge one squad at its last cell.
         if(columnCount > 1)
         {
             firstColumnEnemies[0] = enemyCounts[0][1];
@@ -76,7 +78,6 @@ int main(int argc, const char * argv[]) {
             {
                 enemyCounts[0][1] = squadCapacity;
                 enemyCounts[0][columnCount] = squadCapacity;
-                std::memset(minSquadMemo, -1, sizeof(minSquadMemo));
                 minimumSquads = std::min(minimumSquads, minSquadsFrom(1, 0, 1));
             }
             if(firstColumnEnemies[1] + lastColumnEnemies[1] <= squadCapacity)
@@ -85,7 +86,6 @@ int main(int argc, const char * argv[]) {
                 enemyCounts[0][columnCount] = lastColumnEnemies[0];
                 enemyCounts[1][1] = squadCapacity;
                 enemyCounts[1][columnCount] = squadCapacity;
-                std::memset(minSquadMemo, -1, sizeof(minSquadMemo));
                 minimumSquads = std::min(minimumSquads, minSquadsFrom(1, 1, 0));
             }
             if(firstColumnEnemies[0] + lastColumnEnemies[0] <= squadCapacity && firstColumnEnemies[1] + lastColumnEnemies[1] <= squadCapacity)
@@ -94,7 +94,6 @@ int main(int argc, const char * argv[]) {
                 enemyCounts[0][columnCount] = squadCapacity;
                 enemyCounts[1][1] = squadCapacity;
                 enemyCounts[1][columnCount] = squadCapacity;
-                std::memset(minSquadMemo, -1, sizeof(minSquadMemo));
                 minimumSquads = std::min(minimumSquads, minSquadsFrom(1, 0, 0));
             }
         }

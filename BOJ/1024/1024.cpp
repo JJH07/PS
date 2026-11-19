@@ -1,54 +1,40 @@
-//
-//  main.cpp
-//  1024
-//
-//  Created by 진준호 on 2019/12/31.
-//  Copyright © 2019 진준호. All rights reserved.
-//
+// Copyright © 2019 진준호. All rights reserved.
 
 #include <iostream>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int targetSum, minimumLength, firstTerm = -1, lastTerm = -1;
-    
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    long long targetSum;
+    int minimumLength;
     std::cin >> targetSum >> minimumLength;
-    
-    for(int length = minimumLength; length <= targetSum + 1; length++)
+
+    for(int length = minimumLength; length <= 100; length++)
     {
-        if(length > 100)
+        // targetSum = length * firstTerm + length * (length - 1) / 2.
+        const long long remainingSum = targetSum - 1LL * length * (length - 1) / 2;
+        if(remainingSum < 0)
         {
             break;
         }
-        if(length % 2 == 1 && targetSum % length == 0)
+        if(remainingSum % length != 0)
         {
-            firstTerm = (targetSum / length) - length / 2;
-            lastTerm = (targetSum / length) + length / 2;
-            break;
+            continue;
         }
-        else if(length % 2 == 0 && length / 2 == targetSum % length)
+        const long long firstTerm = remainingSum / length;
+        for(int offset = 0; offset < length; offset++)
         {
-            firstTerm = targetSum / length - (length - 1) / 2;
-            lastTerm = targetSum / length + length / 2;
-            break;
-        }
-    }
-    if(firstTerm < 0)
-    {
-        std::cout << "-1\n";
-    }
-    else
-    {
-        for(int term = firstTerm; term <= lastTerm; term++)
-        {
-            std::cout << term << ' ';
+            if(offset > 0)
+            {
+                std::cout << ' ';
+            }
+            std::cout << firstTerm + offset;
         }
         std::cout << '\n';
+        return 0;
     }
-    
+    std::cout << "-1\n";
     return 0;
 }
