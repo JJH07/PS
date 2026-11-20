@@ -1,27 +1,32 @@
-#include <bits/stdc++.h>
-int n, A[50], B[50];
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <vector>
+
 int main()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
-    std::cin >> n;
-    for(int i = 0; i < n; i++)
+    int elementCount;
+    std::cin >> elementCount;
+    std::vector<int> values(elementCount), sortedWeights(elementCount);
+    for(int &value : values)
     {
-        std::cin >> A[i];
+        std::cin >> value;
     }
-    for(int i = 0; i < n; i++)
+    for(int &weight : sortedWeights)
     {
-        std::cin >> B[i];
+        std::cin >> weight;
     }
-    std::sort(A, A + n);
-    std::sort(B, B + n);
+    std::sort(values.begin(), values.end());
+    std::sort(sortedWeights.begin(), sortedWeights.end(), std::greater<int>());
 
-    int ans = 0;
-    for(int i = 0; i < n; i++)
+    int minimumSum = 0;
+    for(int index = 0; index < elementCount; index++)
     {
-        ans += A[i] * B[n  - i - 1];
+        minimumSum += values[index] * sortedWeights[index];
     }
-    std::cout << ans << '\n';
+    std::cout << minimumSum << '\n';
     return 0;
 }

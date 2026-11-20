@@ -1,49 +1,25 @@
-//
-//  main.cpp
-//  1072
-//
-//  Created by 진준호 on 2019/12/27.
-//  Copyright © 2019 진준호. All rights reserved.
-//
+// Copyright © 2019 진준호. All rights reserved.
 
 #include <iostream>
-#include <algorithm>
-#include <cmath>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int x, y;
-    double z;
-    
-    std::cin >> x >> y;
-    z = std::floor(100.0 * y / x);
-    
-    int l = 1, r = x;
-    while(l <= r)
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    long long gamesPlayed, gamesWon;
+    std::cin >> gamesPlayed >> gamesWon;
+    const long long winPercentage = 100 * gamesWon / gamesPlayed;
+    if(winPercentage >= 99)
     {
-        int mid = (l + r) / 2;
-        double nz = std::floor(100.0 * (y + mid) /(mid + x));
-        if(nz == z)
-        {
-            l = mid + 1;
-        }
-        else
-        {
-            r = mid - 1;
-        }
+        std::cout << "-1\n";
+        return 0;
     }
-    
-    if(z != std::floor(100.0 * (y + l) / (x + l)))
-    {
-        std::cout << l << '\n';
-    }
-    else
-    {
-        std::cout << -1 << '\n';
-    }
+
+    // 100 * (gamesWon + wins) >= (winPercentage + 1) * (gamesPlayed + wins).
+    const long long deficit = (winPercentage + 1) * gamesPlayed - 100 * gamesWon;
+    const long long gainPerWin = 99 - winPercentage;
+    const long long additionalWins = (deficit + gainPerWin - 1) / gainPerWin;
+    std::cout << additionalWins << '\n';
     return 0;
 }

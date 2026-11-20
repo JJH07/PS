@@ -1,34 +1,25 @@
-//
-//  main.cpp
-//  1037
-//
-//  Created by 진준호 on 2019/12/27.
-//  Copyright © 2019 진준호. All rights reserved.
-//
+// Copyright © 2019 진준호. All rights reserved.
 
-#include <iostream>
 #include <algorithm>
-#include <vector>
+#include <iostream>
+#include <limits>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int c, tmp;
-    std::vector<int> list;
-    
-    std::cin >> c;
-    for(int i = 0; i < c; i++)
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int divisorCount;
+    std::cin >> divisorCount;
+    int smallestDivisor = std::numeric_limits<int>::max();
+    int largestDivisor = 0;
+    for(int index = 0; index < divisorCount; index++)
     {
-        std::cin >> tmp;
-        list.push_back(tmp);
+        int divisor;
+        std::cin >> divisor;
+        smallestDivisor = std::min(smallestDivisor, divisor);
+        largestDivisor = std::max(largestDivisor, divisor);
     }
-    int size = (int)list.size();
-    
-    std::sort(list.begin(), list.end());
-    std::cout << list[0] * list[size - 1] << '\n';
-    
+    std::cout << 1LL * smallestDivisor * largestDivisor << '\n';
     return 0;
 }
