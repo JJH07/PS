@@ -1,67 +1,60 @@
-//
-//  main.cpp
-//  1019
-//
-//  Created by 진준호 on 2020/01/15.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
 #include <algorithm>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
+int main()
+{
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int n, tmp, max_step = 1, count[10];
-    
-    std::fill(count, count + 10, 0);
-    
-    std::cin >> n;
-    
-    tmp = n;
-    while(tmp > 0)
+    std::cin.tie(nullptr);
+
+    long long lastPage, remainingDigits, placeValueLimit = 1, digitCounts[10];
+
+    std::fill(digitCounts, digitCounts + 10, 0);
+
+    std::cin >> lastPage;
+
+    remainingDigits = lastPage;
+    while(remainingDigits > 0)
     {
-        max_step *= 10;
-        tmp /= 10;
+        placeValueLimit *= 10;
+        remainingDigits /= 10;
     }
-    
-    for(int step = 1; step < max_step; step *= 10)
+
+    for(long long placeValue = 1; placeValue < placeValueLimit; placeValue *= 10)
     {
-        int left = n / step / 10;
-        int mid = n / step % 10;
-        int right = n % step;
-        
-        if(left == 0)
+        long long higherDigits = lastPage / placeValue / 10;
+        int currentDigit = lastPage / placeValue % 10;
+        long long lowerDigits = lastPage % placeValue;
+
+        if(higherDigits == 0)
         {
-            for(int i = 1; i < mid; i++)
+            for(int i = 1; i < currentDigit; i++)
             {
-                count[i] += step;
+                digitCounts[i] += placeValue;
             }
-            count[mid] += right + 1;
+            digitCounts[currentDigit] += lowerDigits + 1;
         }
         else
         {
             for(int i = 1; i <= 9; i++)
             {
-                count[i] += step;
+                digitCounts[i] += placeValue;
             }
             for(int i = 0; i <= 9; i++)
             {
-                count[i] += (left - 1) * step;
+                digitCounts[i] += (higherDigits - 1) * placeValue;
             }
-            for(int i = 0; i < mid; i++)
+            for(int i = 0; i < currentDigit; i++)
             {
-                count[i] += step;
+                digitCounts[i] += placeValue;
             }
-            count[mid] += right + 1;
+            digitCounts[currentDigit] += lowerDigits + 1;
         }
     }
     for(int i = 0; i < 10; i++)
     {
-        std::cout << count[i] << ' ';
+        std::cout << digitCounts[i] << ' ';
     }
     std::cout << '\n';
     return 0;

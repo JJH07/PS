@@ -1,27 +1,26 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
-#include <cmath>
 #include <vector>
-#define MAX 1001
+#define VALUE_ARRAY_SIZE 1001
 
-int n, A[MAX], B[MAX];
-bool Prime[2001], check[MAX];
-std::vector<int> adj[MAX];
+int valueCount, matchedEvenByOdd[VALUE_ARRAY_SIZE], matchedOddByEven[VALUE_ARRAY_SIZE];
+bool isComposite[2001], visitedOdd[VALUE_ARRAY_SIZE];
+std::vector<int> primeSumNeighbors[VALUE_ARRAY_SIZE];
 
-bool dfs(int a)
+bool tryMatchOdd(int oddValue)
 {
-    if(check[a])
+    if(visitedOdd[oddValue])
     {
         return false;
     }
-    check[a] = 1;
-    for(auto &b : adj[a])
+    visitedOdd[oddValue] = 1;
+    for(auto &evenValue : primeSumNeighbors[oddValue])
     {
-        if(B[b] == 0 || dfs(B[b]))
+        if(matchedOddByEven[evenValue] == 0 || tryMatchOdd(matchedOddByEven[evenValue]))
         {
-            A[a] = b;
-            B[b] = a;
+            matchedEvenByOdd[oddValue] = evenValue;
+            matchedOddByEven[evenValue] = oddValue;
             return true;
         }
     }
@@ -30,102 +29,102 @@ bool dfs(int a)
 int main()
 {
     std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
     for(int i = 2; i <= 2000; i++)
     {
-        if(!Prime[i])
+        if(!isComposite[i])
         {
             for(int j = i + i; j <= 2000; j += i)
             {
-                Prime[j] = true;
+                isComposite[j] = true;
             }
         }
     }
 
-    int first;
-    std::vector<int> odd, even, ans;
-    
-    std::cin >> n;
-    for(int i = 0; i < n; i++)
+    int firstValue = 0;
+    std::vector<int> oddValues, evenValues, possiblePartners;
+
+    std::cin >> valueCount;
+    for(int i = 0; i < valueCount; i++)
     {
-        int number;
-        std::cin >> number;
+        int value;
+        std::cin >> value;
         if(i == 0)
         {
-            first = number;
+            firstValue = value;
         }
-        if(number & 1)
+        if(value & 1)
         {
-            odd.push_back(number);
+            oddValues.push_back(value);
         }
         else
         {
-            even.push_back(number);
+            evenValues.push_back(value);
         }
     }
-    for(int i : odd)
+    for(int i : oddValues)
     {
-        for(int j : even)
+        for(int j : evenValues)
         {
-            if(!Prime[i + j])
+            if(!isComposite[i + j])
             {
-                adj[i].push_back(j);
+                primeSumNeighbors[i].push_back(j);
             }
         }
     }
     while(1)
     {
-        std::memset(A, 0, sizeof(A));
-        std::memset(B, 0, sizeof(B));
-        int Pair = 0;
-        for(auto od : odd)
+        std::memset(matchedEvenByOdd, 0, sizeof(matchedEvenByOdd));
+        std::memset(matchedOddByEven, 0, sizeof(matchedOddByEven));
+        int matchedPairCount = 0;
+        for(auto oddValue : oddValues)
         {
-            std::memset(check, 0, sizeof(check));
-            if(dfs(od))
+            std::memset(visitedOdd, 0, sizeof(visitedOdd));
+            if(tryMatchOdd(oddValue))
             {
-                Pair++;
+                matchedPairCount++;
             }
         }
-        if(Pair != n / 2)
+        if(matchedPairCount != valueCount / 2)
         {
             break;
         }
-        if(first & 1)
+        if(firstValue & 1)
         {
-            for(auto it = adj[first].begin(); it != adj[first].end(); it++)
+            for(auto neighborIt = primeSumNeighbors[firstValue].begin(); neighborIt != primeSumNeighbors[firstValue].end(); neighborIt++)
             {
-                if(*it == A[first])
+                if(*neighborIt == matchedEvenByOdd[firstValue])
                 {
-                    adj[first].erase(it);
+                    primeSumNeighbors[firstValue].erase(neighborIt);
                     break;
                 }
             }
-            ans.push_back(A[first]);
+            possiblePartners.push_back(matchedEvenByOdd[firstValue]);
         }
         else
         {
-            for(auto it = adj[B[first]].begin(); it != adj[B[first]].end(); it++)
+            for(auto neighborIt = primeSumNeighbors[matchedOddByEven[firstValue]].begin(); neighborIt != primeSumNeighbors[matchedOddByEven[firstValue]].end(); neighborIt++)
             {
-                if(*it == first)
+                if(*neighborIt == firstValue)
                 {
-                    adj[B[first]].erase(it);
+                    primeSumNeighbors[matchedOddByEven[firstValue]].erase(neighborIt);
                     break;
                 }
             }
-            ans.push_back(B[first]);
+            possiblePartners.push_back(matchedOddByEven[firstValue]);
         }
     }
-    if(ans.empty())
+    if(possiblePartners.empty())
     {
         std::cout << "-1\n";
     }
     else
     {
-        std::sort(ans.begin(), ans.end());
-        for(auto x : ans)
+        std::sort(possiblePartners.begin(), possiblePartners.end());
+        for(auto partner : possiblePartners)
         {
-            std::cout << x << ' ';
+            std::cout << partner << ' ';
         }
     }
     return 0;

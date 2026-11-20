@@ -1,86 +1,59 @@
-//
-//  main.cpp
-//  1022
-//
-//  Created by 진준호 on 2020/01/28.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
-#include <iostream>
 #include <algorithm>
-#include <cmath>
-int map[51][6], need_space[51][6], r1, c1, r2, c2, x, y, max_len;
-int dx[4] = {0, -1, 0, 1}, dy[4] = {1, 0, -1, 0};
-bool in_table()
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+#include <string>
+
+long long spiralValueAt(int row, int column)
 {
-    if(x >= 0 && x <= r2 && y >= 0 && y <= c2)
+    const int radius = std::max(std::abs(row), std::abs(column));
+    const long long sideLength = 2LL * radius + 1;
+    const long long cornerValue = sideLength * sideLength;
+
+    // Each ring ends at its bottom-right corner: (radius, radius).
+    if(row == radius)
     {
-        return true;
+        return cornerValue - (radius - column);
     }
-    return false;
+    if(column == -radius)
+    {
+        return cornerValue - 2LL * radius - (radius - row);
+    }
+    if(row == -radius)
+    {
+        return cornerValue - 4LL * radius - (column + radius);
+    }
+    return cornerValue - 6LL * radius - (row + radius);
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
 
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int filled = 1, numbering = 1, cnt = 0, idx = 0;
-    
-    std::cin >> r1 >> c1 >> r2 >> c2;
-    
-    r2 -= r1;
-    c2 -= c1;
-    x -= r1;
-    y -= c1;
-    r1 = 0;
-    c1 = 0;
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    if(in_table())
+    int firstRow, firstColumn, lastRow, lastColumn;
+    std::cin >> firstRow >> firstColumn >> lastRow >> lastColumn;
+
+    long long maximumValue = 0;
+    for(int row = firstRow; row <= lastRow; row++)
     {
-        map[x][y] = numbering;
-        filled++;
-        max_len = 1;
-        need_space[x][y] = 1;
-    }
-    numbering++;
-    while(filled <= (r2 + 1) * (c2 + 1))
-    {
-        if(idx % 2 == 0)
+        for(int column = firstColumn; column <= lastColumn; column++)
         {
-            cnt++;
+            maximumValue = std::max(maximumValue, spiralValueAt(row, column));
         }
-        for(int i = 1; i <= cnt; i++)
-        {
-            x += dx[idx];
-            y += dy[idx];
-            if(in_table())
-            {
-                map[x][y] = numbering;
-                filled++;
-                
-                int tmp = numbering, len = 0;
-                while(tmp > 0)
-                {
-                    len++;
-                    tmp /= 10;
-                }
-                need_space[x][y] = len;
-                max_len = len;
-            }
-            numbering++;
-        }
-        idx = (idx + 1) % 4;
     }
-    for(int i = 0; i <= r2; i++)
+    const int outputWidth = static_cast<int>(std::to_string(maximumValue).size());
+    for(int row = firstRow; row <= lastRow; row++)
     {
-        for(int j = 0; j <= c2; j++)
+        for(int column = firstColumn; column <= lastColumn; column++)
         {
-            for(int k = 0; k < max_len - need_space[i][j]; k++)
+            if(column > firstColumn)
             {
                 std::cout << ' ';
             }
-            std::cout << map[i][j] << ' ';
+            std::cout << std::setw(outputWidth) << spiralValueAt(row, column);
         }
         std::cout << '\n';
     }

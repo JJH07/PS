@@ -1,54 +1,40 @@
-//
-//  main.cpp
-//  1024
-//
-//  Created by 진준호 on 2019/12/31.
-//  Copyright © 2019 진준호. All rights reserved.
-//
+// Copyright © 2019 진준호. All rights reserved.
 
 #include <iostream>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int N, L, s = -1, e = -1;
-    
-    std::cin >> N >> L;
-    
-    for(int i = L; i <= N + 1; i++)
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    long long targetSum;
+    int minimumLength;
+    std::cin >> targetSum >> minimumLength;
+
+    for(int length = minimumLength; length <= 100; length++)
     {
-        if(i > 100)
+        // targetSum = length * firstTerm + length * (length - 1) / 2.
+        const long long remainingSum = targetSum - 1LL * length * (length - 1) / 2;
+        if(remainingSum < 0)
         {
             break;
         }
-        if(i % 2 == 1 && N % i == 0)
+        if(remainingSum % length != 0)
         {
-            s = (N / i) - i / 2;
-            e = (N / i) + i / 2;
-            break;
+            continue;
         }
-        else if(i % 2 == 0 && i / 2 == N % i)
+        const long long firstTerm = remainingSum / length;
+        for(int offset = 0; offset < length; offset++)
         {
-            s = N / i - (i - 1) / 2;
-            e = N / i + i / 2;
-            break;
-        }
-    }
-    if(s < 0)
-    {
-        std::cout << "-1\n";
-    }
-    else
-    {
-        for(int i = s; i <= e; i++)
-        {
-            std::cout << i << ' ';
+            if(offset > 0)
+            {
+                std::cout << ' ';
+            }
+            std::cout << firstTerm + offset;
         }
         std::cout << '\n';
+        return 0;
     }
-    
+    std::cout << "-1\n";
     return 0;
 }
