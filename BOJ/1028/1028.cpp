@@ -1,86 +1,67 @@
-//
-//  main.cpp
-//  1028
-//
-//  Created by 진준호 on 2020/02/17.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
+#include <algorithm>
 #include <iostream>
 #include <string>
-#include <cstring>
 
-int r, c, left[751][751], right[751][751], ans = 0;
-std::string map[751];
-int check_left(int i, int j)
+int downLeft[750][750], downRight[750][750];
+std::string mine[750];
+
+int main()
 {
-    if(map[i][j] == '0' || i < 0 || j < 0 || i >= r || j >= c)
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int rowCount, columnCount;
+    std::cin >> rowCount >> columnCount;
+    for(int row = 0; row < rowCount; row++)
     {
-        return 0;
+        std::cin >> mine[row];
     }
-    int &ret = left[i][j];
-    if(ret != -1)
+
+    // Only read a neighboring cell after checking its coordinates.
+    for(int row = rowCount - 1; row >= 0; row--)
     {
-        return ret;
-    }
-    return ret = 1 + check_left(i + 1,  j - 1);
-}
-int check_right(int i, int j)
-{
-    if(map[i][j] == '0' || i < 0 || j < 0 || i >= r || j >= c)
-    {
-        return 0;
-    }
-    int &ret = right[i][j];
-    if(ret != -1)
-    {
-        return ret;
-    }
-    return ret = 1 + check_right(i + 1,  j + 1);
-}
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    memset(left, -1, sizeof(left));
-    memset(right, -1, sizeof(right));
-    
-    std::cin >> r >> c;
-    
-    for(int i = 0; i < r; i++)
-    {
-        std::cin >> map[i];
-    }
-    for(int i = 0; i < r; i++)
-    {
-        for(int j = 0; j < c; j++)
+        for(int column = 0; column < columnCount; column++)
         {
-            if(map[i][j] == '1')
+            if(mine[row][column] == '0')
             {
-                check_left(i, j);
-                check_right(i, j);
+                continue;
+            }
+            downLeft[row][column] = 1;
+            downRight[row][column] = 1;
+            if(row + 1 < rowCount && column > 0)
+            {
+                downLeft[row][column] += downLeft[row + 1][column - 1];
+            }
+            if(row + 1 < rowCount && column + 1 < columnCount)
+            {
+                downRight[row][column] += downRight[row + 1][column + 1];
             }
         }
     }
-    for(int i = 0; i < r; i++)
+
+    int largestDiamond = 0;
+    for(int row = 0; row < rowCount; row++)
     {
-        for(int j = 0; j < c; j++)
+        for(int column = 0; column < columnCount; column++)
         {
-            if(map[i][j] == '1')
+            int candidateSize = std::min(downLeft[row][column], downRight[row][column]);
+            candidateSize = std::min(candidateSize, (rowCount - row + 1) / 2);
+            for(; candidateSize > largestDiamond; candidateSize--)
             {
-                int level = std::min(left[i][j], right[i][j]);
-                for(; level > ans; level--)
+                const int middleRow = row + candidateSize - 1;
+                const int leftColumn = column - candidateSize + 1;
+                const int rightColumn = column + candidateSize - 1;
+                if(downRight[middleRow][leftColumn] >= candidateSize &&
+                   downLeft[middleRow][rightColumn] >= candidateSize)
                 {
-                    if(right[i + (level - 1)][j - (level - 1)] >= level && left[i + (level - 1)][j + (level - 1)] >= level)
-                    {
-                        ans = level;
-                    }
+                    largestDiamond = candidateSize;
+                    break;
                 }
             }
         }
     }
-    std::cout << ans << '\n';
+    std::cout << largestDiamond << '\n';
     return 0;
 }

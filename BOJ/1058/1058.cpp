@@ -1,59 +1,43 @@
+#include <algorithm>
 #include <iostream>
+#include <string>
 
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    int n, map[50][50];
-    std::cin >> n;
-    for(int i = 0; i < n; i++)
+    int personCount;
+    std::cin >> personCount;
+    std::string friendships[50];
+    for(int person = 0; person < personCount; person++)
     {
-        for(int j = 0; j < n; j++)
-        {
-            char c;
-            std::cin >> c;
-            if(c == 'N')
-            {
-                map[i][j] = 0;
-            }
-            else
-            {
-                map[i][j] = 1;
-            }
-        }
+        std::cin >> friendships[person];
     }
-    for(int k = 0; k < n; k++)
+
+    int maximumTwoFriends = 0;
+    for(int person = 0; person < personCount; person++)
     {
-        for(int i = 0; i < n; i++)
+        int twoFriendCount = 0;
+        for(int other = 0; other < personCount; other++)
         {
-            for(int j = 0; j < n; j++)
-            {
-                if(i == j || map[i][k] == 0 || map[k][j] == 0)
-                {
-                    continue;
-                }
-                map[i][j] = std::min(map[i][j], map[i][k] + map[k][j]);
-            }
-        }
-    }
-    int ans = 0;
-    for(int i = 0; i < n; i++)
-    {
-        int t = 0;
-        for(int j = 0; j < n; j++)
-        {
-            if(i == j)
+            if(person == other)
             {
                 continue;
             }
-            if(map[i][j] <= 2)
+            bool isTwoFriend = friendships[person][other] == 'Y';
+            for(int intermediary = 0; !isTwoFriend && intermediary < personCount; intermediary++)
             {
-                t++;
+                isTwoFriend = friendships[person][intermediary] == 'Y' &&
+                              friendships[intermediary][other] == 'Y';
+            }
+            if(isTwoFriend)
+            {
+                twoFriendCount++;
             }
         }
-        ans = std::max(ans, t);
+        maximumTwoFriends = std::max(maximumTwoFriends, twoFriendCount);
     }
-    std::cout << ans << '\n';
+    std::cout << maximumTwoFriends << '\n';
     return 0;
 }

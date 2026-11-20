@@ -1,64 +1,64 @@
-//
-//  main.cpp
-//  1043
-//
-//  Created by 진준호 on 2020/02/18.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
 #include <vector>
 
-int n, m, t, t_mem[50], p, tmp, truth[51];
-std::vector<int> group[51], member[51];
+std::vector<int> partyMembers[51], partiesByPerson[51];
+bool mustTellTruth[51];
 
-void tell_truth(int mem_idx)
+void spreadTruth(int person)
 {
-    for(auto g_it = member[mem_idx].begin(); g_it != member[mem_idx].end(); g_it++)
+    for(int party : partiesByPerson[person])
     {
-        if(truth[*g_it] == 0)
+        if(mustTellTruth[party])
         {
-            truth[*g_it] = 1;
-            for(auto m_it = group[*g_it].begin(); m_it != group[*g_it].end(); m_it++)
-            {
-                tell_truth(*m_it);
-            }
+            continue;
+        }
+        mustTellTruth[party] = true;
+        for(int attendee : partyMembers[party])
+        {
+            spreadTruth(attendee);
         }
     }
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    std::cin >> n >> m >> t;
-    for(int i = 0; i < t; i++)
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int personCount, partyCount, truthKnowerCount;
+    std::cin >> personCount >> partyCount >> truthKnowerCount;
+    std::vector<int> truthKnowers(truthKnowerCount);
+    for(int &person : truthKnowers)
     {
-        std::cin >> t_mem[i];
+        std::cin >> person;
     }
-    for(int i = 1; i <= m; i++)
+    for(int party = 1; party <= partyCount; party++)
     {
-        std::cin >> p;
-        for(int j = 0; j < p; j++)
+        int attendeeCount;
+        std::cin >> attendeeCount;
+        for(int index = 0; index < attendeeCount; index++)
         {
-            std::cin >> tmp;
-            group[i].push_back(tmp);
-            member[tmp].push_back(i);
+            int attendee;
+            std::cin >> attendee;
+            partyMembers[party].push_back(attendee);
+            partiesByPerson[attendee].push_back(party);
         }
     }
-    for(int i = 0; i < t; i++)
+    for(int person : truthKnowers)
     {
-        tell_truth(t_mem[i]);
+        spreadTruth(person);
     }
-    int ans = 0;
-    for(int i = 1; i <= m; i++)
+
+    int possibleLieCount = 0;
+    for(int party = 1; party <= partyCount; party++)
     {
-        if(truth[i] == 0)
+        if(!mustTellTruth[party])
         {
-            ans++;
+            possibleLieCount++;
         }
     }
-    std::cout << ans << '\n';
+    std::cout << possibleLieCount << '\n';
     return 0;
 }

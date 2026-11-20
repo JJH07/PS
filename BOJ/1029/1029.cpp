@@ -1,47 +1,51 @@
-#include <iostream>
-#include <vector>
-#include <string>
 #include <algorithm>
-int n, prices[15][15], dp[15][10][1 << 15];
-int solve(int now, int price, int state)
+#include <iostream>
+#include <string>
+#include <vector>
+
+int artistCount, maskCount, salePrices[15][15];
+std::vector<int> additionalOwnersMemo;
+
+int maxAdditionalOwners(int owner, int lastPrice, int visitedMask)
 {
-    int &ret = dp[now][price][state];
-    if(ret != -1)
+    const int memoIndex = (owner * 10 + lastPrice) * maskCount + visitedMask;
+    int &cachedMaximum = additionalOwnersMemo[memoIndex];
+    if(cachedMaximum != -1)
     {
-        return ret;
+        return cachedMaximum;
     }
-    ret = 0;
-    for(int i = 1; i < n; i++)
+    cachedMaximum = 0;
+    for(int buyer = 0; buyer < artistCount; buyer++)
     {
-        int next = (1 << i);
-        if(state & next)
+        const int buyerBit = 1 << buyer;
+        if((visitedMask & buyerBit) || salePrices[owner][buyer] < lastPrice)
         {
             continue;
         }
-        if(prices[now][i] >= price)
-        {
-            ret = std::max(ret, 1 + solve(i, prices[now][i], state + next));
-        }
+        cachedMaximum = std::max(
+            cachedMaximum,
+            1 + maxAdditionalOwners(buyer, salePrices[owner][buyer], visitedMask | buyerBit));
     }
-    return ret;
+    return cachedMaximum;
 }
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    std::fill(dp[0][0], dp[0][0] + 15 * 10 * (1 << 15), -1);
-
-    std::cin >> n;
-    for(int i = 0; i < n; i++)
+    std::cin >> artistCount;
+    maskCount = 1 << artistCount;
+    additionalOwnersMemo.assign(artistCount * 10 * maskCount, -1);
+    for(int seller = 0; seller < artistCount; seller++)
     {
-        std::string t;
-        std::cin >> t;
-        for(int j = 0; j < n; j++)
+        std::string priceRow;
+        std::cin >> priceRow;
+        for(int buyer = 0; buyer < artistCount; buyer++)
         {
-            prices[i][j] = t[j] - '0';
+            salePrices[seller][buyer] = priceRow[buyer] - '0';
         }
     }
-    std::cout << 1 + solve(0, 0, 1) << '\n';
+    std::cout << 1 + maxAdditionalOwners(0, 0, 1) << '\n';
     return 0;
 }

@@ -1,39 +1,26 @@
-#include <iostream>
+#include <algorithm>
 #include <cmath>
+#include <iomanip>
+#include <iostream>
 
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    std::cout.precision(16);
+    int startX, startY, jumpLength, jumpTime;
+    std::cin >> startX >> startY >> jumpLength >> jumpTime;
+    const double distance = std::hypot(startX, startY);
+    const long long fullJumps = static_cast<long long>(distance / jumpLength);
 
-    int x, y, d, t;
-    std::cin >> x >> y >> d >> t;
-    double distance = sqrt(x * x + y * y);
-    double ans = distance;
-    if(d <= t)
-    {
-        std::cout << distance << '\n';
-    }
-    else
-    {
-        double jump_count = distance / d;
-        if(jump_count < 1)
-        {
-            ans = std::min(ans, (double)t * 2);
-            ans = std::min(ans, (d - distance) + t);
-        }
-        else if(jump_count == 1)
-        {
-            ans = std::min(ans, (double)t);
-        }
-        else
-        {
-            jump_count = ceil(jump_count);
-            ans = std::min(ans, t * jump_count);
-            ans = std::min(ans, (distance - d * (jump_count - 1)) + t * (jump_count - 1));
-        }
-    }
-    std::cout << ans << '\n';
+    double minimumTime = distance;
+    minimumTime = std::min(minimumTime, jumpTime + std::abs(distance - jumpLength));
+    minimumTime = std::min(
+        minimumTime, fullJumps * jumpTime + distance - fullJumps * jumpLength);
+    // At least two jumps can change direction and cover any distance up to their total length.
+    const long long jumpsWithoutWalking = std::max(2LL, fullJumps + 1);
+    minimumTime = std::min(minimumTime, static_cast<double>(jumpsWithoutWalking * jumpTime));
+
+    std::cout << std::fixed << std::setprecision(12) << minimumTime << '\n';
+    return 0;
 }
