@@ -27,3 +27,6 @@ __pycache__/
 /BOJ/1069/1069
 /BOJ/1072/1072
 /BOJ/1074/1074
+
+# Local verification script.
+/verify.py
