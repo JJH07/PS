@@ -1,67 +1,55 @@
 #include <iostream>
-#define MAX 100001
-int n, k, tree[MAX * 4];
 
-int init(int node, int start, int end)
+constexpr int MAX_N = 100000;
+int tree[MAX_N * 4];
+
+void build(int node, int start, int end)
 {
+    tree[node] = end - start + 1;
     if(start == end)
     {
-        return tree[node] = 1;
+        return;
     }
-    int mid = (start + end) / 2;
-    return tree[node] = init(node * 2, start, mid) + init(node * 2 + 1, mid + 1, end);
+    const int mid = (start + end) / 2;
+    build(node * 2, start, mid);
+    build(node * 2 + 1, mid + 1, end);
 }
-int find(int node, int start, int end, int kth)
+
+int removeKth(int node, int start, int end, int rank)
 {
+    tree[node]--;
     if(start == end)
     {
         return start;
     }
-    int mid = (start + end) / 2;
-    int left = tree[node * 2];
-    int right = tree[node * 2 + 1];
-    return left < kth ? find(node * 2 + 1, mid + 1, end, kth - left) : find(node * 2, start, mid, kth);
-}
-void update(int node, int start, int end, int idx)
-{
-    if(idx < start || end < idx)
+    const int mid = (start + end) / 2;
+    const int leftCount = tree[node * 2];
+    if(rank <= leftCount)
     {
-        return ;
+        return removeKth(node * 2, start, mid, rank);
     }
-    tree[node]--;
-    if(start != end)
-    {
-        int mid = (start + end) / 2;
-        update(node * 2, start, mid, idx);
-        update(node * 2 + 1, mid  + 1, end, idx);
-    }
+    return removeKth(node * 2 + 1, mid + 1, end, rank - leftCount);
 }
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
+    int n, k;
     std::cin >> n >> k;
-    init(1, 1, n);
+    build(1, 1, n);
 
-    int kth = k;
-
+    int rank = 1;
     std::cout << '<';
-    while(1)
+    for(int remaining = n; remaining > 0; remaining--)
     {
-        while(kth > tree[1])
+        rank = (rank + k - 2) % remaining + 1;
+        std::cout << removeKth(1, 1, n, rank);
+        if(remaining > 1)
         {
-            kth -= tree[1];
+            std::cout << ", ";
         }
-        int num = find(1, 1, n, kth);
-        std::cout << num;
-        update(1, 1, n, num);
-        if(tree[1] == 0)
-        {
-            break;
-        }
-        kth += k - 1;
-        std::cout << ", ";
     }
     std::cout << ">\n";
     return 0;

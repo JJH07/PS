@@ -1,34 +1,27 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
-int n;
-std::vector<std::string> list;
-bool comp(const std::string &a, const std::string &b)
-{
-    if(a.length() == b.length())
-    {
-        return a < b;
-    }
-    return a.length() < b.length();
-}
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
+    int n;
     std::cin >> n;
-    while(n--)
+    std::vector<std::string> words(n);
+    for(auto &word : words)
     {
-        std::string t;
-        std::cin >> t;
-        list.push_back(t);
+        std::cin >> word;
     }
-    std::sort(list.begin(), list.end(), comp);
-    list.erase(std::unique(list.begin(), list.end()), list.end());
-    for(auto str : list)
+    std::sort(words.begin(), words.end(), [](const std::string &a, const std::string &b) {
+        return a.size() == b.size() ? a < b : a.size() < b.size();
+    });
+    words.erase(std::unique(words.begin(), words.end()), words.end());
+    for(const auto &word : words)
     {
-        std::cout << str << '\n';
+        std::cout << word << '\n';
     }
     return 0;
 }

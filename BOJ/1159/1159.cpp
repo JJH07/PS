@@ -1,51 +1,29 @@
-//
-//  main.cpp
-//  1159
-//
-//  Created by 진준호 on 2020/01/28.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
 #include <string>
-#include <algorithm>
-#include <vector>
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int n, check[27];
-    std::string name;
-    std::vector<char> list;
-    
-    std::fill(check, check + 27, 0);
-    
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, counts[26]{};
     std::cin >> n;
-    while(n--)
+    for(int i = 0; i < n; i++)
     {
+        std::string name;
         std::cin >> name;
-        int idx = name[0] - 'a';
-        if(check[idx] == -1)
+        counts[name[0] - 'a']++;
+    }
+    std::string initials;
+    for(int i = 0; i < 26; i++)
+    {
+        if(counts[i] >= 5)
         {
-            continue;
-        }
-        check[idx]++;
-        if(check[idx] >= 5)
-        {
-            list.push_back(name[0]);
-            check[idx] = -1;
+            initials += static_cast<char>('a' + i);
         }
     }
-    if((int)list.empty())
-    {
-        std::cout << "PREDAJA\n";
-    }
-    sort(list.begin(), list.end());
-    for(std::vector<char>::iterator it = list.begin(); it != list.end(); it++)
-    {
-        std::cout << *it;
-    }
+    std::cout << (initials.empty() ? "PREDAJA" : initials) << '\n';
     return 0;
 }

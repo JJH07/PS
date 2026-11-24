@@ -1,102 +1,76 @@
-//
-//  main.cpp
-//  1086
-//
-//  Created by 진준호 on 2020/05/17.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
-#include <iostream>
 #include <algorithm>
-#include <string>
+#include <iostream>
 #include <numeric>
+#include <string>
 
-int n, k;
-long long memo[101][1 << 15], mod_10[51], number_len[51], number_mod[15];
-std::string list[15];
-long long gcd(long long a, long long b)
+int n, mod;
+long long dp[100][1 << 15];
+int pow10[51], lengths[15], remainders[15];
+std::string numbers[15];
+
+long long countWays(int remainder, int mask)
 {
-    if(b > a)
+    if(mask == (1 << n) - 1)
     {
-        return gcd(b, a);
+        return remainder == 0 ? 1 : 0;
     }
-    if(b == 0)
+    long long &result = dp[remainder][mask];
+    if(result != -1)
     {
-        return a;
+        return result;
     }
-    return gcd(b, a % b);
-}
-long long solve(int rest, int visited)
-{
-    if(visited == (1 << n) - 1)
-    {
-        return rest == 0 ? 1 : 0;
-    }
-    long long &ret = memo[rest][visited];
-    if(ret != -1)
-    {
-        return ret;
-    }
-    ret = 0;
+    result = 0;
     for(int i = 0; i < n; i++)
     {
-        if(!(visited & (1 << i)))
+        if(mask & (1 << i))
         {
-            ret += solve(((rest * mod_10[number_len[i]] + number_mod[i]) % k), visited + (1 << i));
+            continue;
         }
+        const int next = (remainder * pow10[lengths[i]] + remainders[i]) % mod;
+        result += countWays(next, mask | (1 << i));
     }
-    return ret;
+    return result;
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
 
-    std::fill(memo[0], memo[0] + (101 * ((1 << 15) - 1)), -1);
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     std::cin >> n;
     for(int i = 0; i < n; i++)
     {
-        std::cin >> list[i];
-        number_len[i] = list[i].length();
+        std::cin >> numbers[i];
+        lengths[i] = numbers[i].size();
     }
-    std::cin >> k;
+    std::cin >> mod;
 
-    mod_10[0] = 1 % k;
+    for(auto &row : dp)
+    {
+        std::fill(row, row + (1 << 15), -1);
+    }
+    pow10[0] = 1 % mod;
     for(int i = 1; i <= 50; i++)
     {
-        mod_10[i] = (mod_10[i - 1] * 10) % k;
+        pow10[i] = pow10[i - 1] * 10 % mod;
     }
     for(int i = 0; i < n; i++)
     {
-        long long ret = 0;
-        for(auto x : list[i])
+        for(char digit : numbers[i])
         {
-            ret = (ret * 10 + (x - '0')) % k;
+            remainders[i] = (remainders[i] * 10 + digit - '0') % mod;
         }
-        number_mod[i] = ret;
     }
 
-    long long ans = solve(0, 0);
-    long long max_ = 1;
-    for(long long i = 1; i <= n; i++)
+    long long numerator = countWays(0, 0);
+    long long denominator = 1;
+    for(int i = 2; i <= n; i++)
     {
-        max_ *= i;
+        denominator *= i;
     }
-
-    if(ans == 0)
-    {
-        std::cout << "0/1\n";
-    }
-    else
-    {
-        long long gcd_ = gcd(ans, max_);
-        if(gcd_ > 0)
-        {
-            ans /= gcd_;
-            max_ /= gcd_;
-        }
-        std::cout << ans << '/' << max_ << '\n';
-    }
+    const long long divisor = std::gcd(numerator, denominator);
+    std::cout << numerator / divisor << '/' << denominator / divisor << '\n';
     return 0;
 }

@@ -1,91 +1,86 @@
-//
-//  main.cpp
-//  1194
-//
-//  Created by 진준호 on 2020/05/20.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
-#include <string>
 #include <queue>
-#include <cstring>
-struct node
+#include <string>
+
+struct State
 {
-    int x;
-    int y;
+    int row, col;
     int dist;
-    int key;
+    int keyMask;
 };
-int dx[4] = {0, 1, 0, -1}, dy[4] = {1, 0, -1, 0};
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int n, m, visited[50][50][1 << 6], ans = -1;
-    std::string map[50];
-    std::queue<node> q;
-    node front = {0, 0, 0, 0};
-    
-    std::memset(visited, 0, sizeof(visited));
-    
+
+constexpr int dr[4] = {0, 1, 0, -1};
+constexpr int dc[4] = {1, 0, -1, 0};
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, m;
+    bool visited[50][50][1 << 6]{};
+    std::string maze[50];
+    std::queue<State> queue;
+    State start{};
+
     std::cin >> n >> m;
-    
-    for(int i = 0; i < n; i++)
+    for(int row = 0; row < n; row++)
     {
-        std::cin >> map[i];
-        for(int j = 0; j < m; j++)
+        std::cin >> maze[row];
+        for(int col = 0; col < m; col++)
         {
-            if(map[i][j] == '0')
+            if(maze[row][col] == '0')
             {
-                front.x = i;
-                front.y = j;
+                start.row = row;
+                start.col = col;
             }
         }
     }
-    
-    visited[front.x][front.y][front.key] = 1;
-    q.push(front);
-    while(!q.empty())
+
+    visited[start.row][start.col][start.keyMask] = true;
+    queue.push(start);
+    int answer = -1;
+    while(!queue.empty())
     {
-        front = q.front();
-        q.pop();
-        if(map[front.x][front.y] == '1')
+        const State current = queue.front();
+        queue.pop();
+        if(maze[current.row][current.col] == '1')
         {
-            ans = front.dist;
+            answer = current.dist;
             break;
         }
         for(int i = 0; i < 4; i++)
         {
-            int nx = dx[i] + front.x;
-            int ny = dy[i] + front.y;
-            int nkey = front.key;
-            if(nx < 0 || ny < 0 || nx >= n || ny >= m || map[nx][ny] == '#')
+            const int row = current.row + dr[i];
+            const int col = current.col + dc[i];
+            if(row < 0 || row >= n || col < 0 || col >= m)
             {
                 continue;
             }
-            
-            if(map[nx][ny] >= 'A' && map[nx][ny] <= 'F')
-            {
-                if(!(nkey & (1 << (map[nx][ny] - 'A'))))
-                {
-                    continue;
-                }
-            }
-            if(map[nx][ny] >= 'a' && map[nx][ny] <= 'f')
-            {
-                nkey |= (1 << (map[nx][ny] - 'a'));
-            }
-            if(visited[nx][ny][nkey])
+            const char cell = maze[row][col];
+            if(cell == '#')
             {
                 continue;
             }
-            q.push({nx, ny, front.dist + 1, nkey});
-            visited[nx][ny][nkey] = 1;
+            int nextMask = current.keyMask;
+            if(cell >= 'A' && cell <= 'F' && !(nextMask & (1 << (cell - 'A'))))
+            {
+                continue;
+            }
+            if(cell >= 'a' && cell <= 'f')
+            {
+                nextMask |= 1 << (cell - 'a');
+            }
+            if(visited[row][col][nextMask])
+            {
+                continue;
+            }
+            visited[row][col][nextMask] = true;
+            queue.push({row, col, current.dist + 1, nextMask});
         }
     }
-    std::cout << ans << '\n';
+    std::cout << answer << '\n';
     return 0;
 }

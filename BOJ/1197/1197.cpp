@@ -1,63 +1,67 @@
 #include <iostream>
-#include <vector>
 #include <queue>
-#include <cstring>
 
-typedef long long ll;
+struct Edge
+{
+    int from, to;
+    long long weight;
 
-struct route{
-    int A, B;
-    ll dist;
-    bool operator<(const route &rhs) const{
-        return dist > rhs.dist;
+    bool operator<(const Edge &other) const
+    {
+        return weight > other.weight;
     }
 };
-int V, E;
+
 int parent[10001];
-int Find(int idx)
+
+int findRoot(int node)
 {
-    if(parent[idx] == 0)
+    if(parent[node] == 0)
     {
-        return idx;
+        return node;
     }
-    return parent[idx] = Find(parent[idx]);
+    return parent[node] = findRoot(parent[node]);
 }
-void Union(int a, int b)
+
+bool unite(int a, int b)
 {
-    a = Find(a);
-    b = Find(b);
+    a = findRoot(a);
+    b = findRoot(b);
     if(a == b)
     {
-        return ;
+        return false;
     }
     parent[a] = b;
+    return true;
 }
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    ll v = 0;
-    std::priority_queue<route> pq;
-
-    std::cin >> V >> E;
-    for(int i = 0; i < E; i++)
+    int vertices, edges;
+    std::cin >> vertices >> edges;
+    std::priority_queue<Edge> queue;
+    for(int i = 0; i < edges; i++)
     {
-        int A, B;
-        ll C;
-        std::cin >> A >> B >> C;
-        pq.push({A, B, C});
+        Edge edge;
+        std::cin >> edge.from >> edge.to >> edge.weight;
+        queue.push(edge);
     }
-    while(!pq.empty())
+
+    long long totalWeight = 0;
+    int selected = 0;
+    while(!queue.empty() && selected < vertices - 1)
     {
-        route min = pq.top();
-        if(Find(min.A) != Find(min.B))
+        const Edge edge = queue.top();
+        queue.pop();
+        if(unite(edge.from, edge.to))
         {
-            Union(min.A, min.B);
-            v += min.dist;
+            totalWeight += edge.weight;
+            selected++;
         }
-        pq.pop();
     }
-    std::cout << v << '\n';
+    std::cout << totalWeight << '\n';
     return 0;
 }

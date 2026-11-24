@@ -1,52 +1,35 @@
-//
-//  main.cpp
-//  1138
-//
-//  Created by 진준호 on 2020/01/07.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int n, line[11];
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    for(int i = 1; i <= 10; i++)
-    {
-        line[i] = -1;
-    }
-    
+    int n, lineup[11]{};
     std::cin >> n;
-    
-    for(int i = 1; i <= n; i++)
+    for(int height = 1; height <= n; height++)
     {
-        int cnt = 0, p;
-        std::cin >> p;
-        for(int j = 1; j <= n; j++)
+        int toSkip;
+        std::cin >> toSkip;
+        for(int pos = 1; pos <= n; pos++)
         {
-            if(line[j] != -1)
+            if(lineup[pos] != 0)
             {
                 continue;
             }
-            if(p > cnt)
+            if(toSkip == 0)
             {
-                cnt++;
-            }
-            else
-            {
-                line[j] = i;
+                lineup[pos] = height;
                 break;
             }
+            toSkip--;
         }
     }
-    for(int i = 1; i <= n; i++)
+    for(int pos = 1; pos <= n; pos++)
     {
-        std::cout << line[i] << ' ';
+        std::cout << lineup[pos] << (pos == n ? '\n' : ' ');
     }
     return 0;
 }
