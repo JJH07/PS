@@ -6,7 +6,7 @@
 
 | 경로 | 내용 |
 | --- | --- |
-| [BOJ/](BOJ/) | 643개 문제의 C++ 소스 655개 |
+| [BOJ/](BOJ/) | 643개 문제의 C++ 소스 654개 |
 | [Codeforces/](Codeforces/) | 7개 대회 폴더의 C++ 소스 40개 |
 | [archive/vscode/](archive/vscode/) | 과거 VS Code 설정 |
 

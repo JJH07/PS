@@ -1,31 +1,27 @@
-#include <iostream>
+#include <algorithm>
 #include <climits>
-#include <cmath>
-typedef long long ll;
+#include <iostream>
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    ll D, P, Q;
-    std::cin >> D >> P >> Q;
-    if(P > Q)
+    long long target, p, q;
+    std::cin >> target >> p >> q;
+    if(p > q)
     {
-        std::swap(P, Q);
+        std::swap(p, q);
     }
-    ll ans = LLONG_MAX;
-    for(int Qi = 0; Qi < std::min(P, D / Q + 2); Qi++)
+    long long best = LLONG_MAX;
+    const long long limit = std::min(p, target / q + 2);
+    for(long long countQ = 0; countQ < limit; countQ++)
     {
-        ll PMAX = (D - Q * Qi) / P;
-        for(int Pi = std::max(1LL * 0, PMAX - 2); Pi < PMAX + 2; Pi++)
-        {
-            ll Candidate = P * Pi + Q * Qi;
-            if(Candidate >= D)
-            {
-                ans = std::min(ans, Candidate);
-            }
-        }
+        const long long remaining = target - q * countQ;
+        const long long countP = remaining > 0 ? (remaining + p - 1) / p : 0;
+        const long long candidate = p * countP + q * countQ;
+        best = std::min(best, candidate);
     }
-    std::cout << ans << '\n';
+    std::cout << best << '\n';
     return 0;
 }

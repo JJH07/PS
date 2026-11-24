@@ -1,32 +1,24 @@
-//
-//  main.cpp
-//  1238
-//
-//  Created by 진준호 on 2020/05/12.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <queue>
-#include <algorithm>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int n, m, x, table[1001][1001];
-    std::fill(table[0], table[0] + 1001 * 1001, 2147000);
-    
-    
+constexpr int INF = 2147000;
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, m, x;
     std::cin >> n >> m >> x;
+    std::vector<std::vector<int>> dist(n + 1, std::vector<int>(n + 1, INF));
     for(int i = 0; i < m; i++)
     {
-        int a, b, c;
-        std::cin >> a >> b >> c;
-        table[a][b] = c;
+        int from, to, cost;
+        std::cin >> from >> to >> cost;
+        dist[from][to] = cost;
     }
     for(int k = 1; k <= n; k++)
     {
@@ -34,26 +26,19 @@ int main(int argc, const char * argv[]) {
         {
             for(int j = 1; j <= n; j++)
             {
-                if(table[i][j] > table[i][k] + table[k][j])
-                {
-                    table[i][j] = table[i][k] + table[k][j];
-                }
+                dist[i][j] = std::min(dist[i][j], dist[i][k] + dist[k][j]);
             }
         }
     }
-    int max_dist = -1;
+    int maxRoundTrip = -1;
     for(int i = 1; i <= n; i++)
     {
-        if(i == x)
+        if(i == x || dist[i][x] == INF || dist[x][i] == INF)
         {
             continue;
         }
-        if(table[i][x] == 2147000 || table[x][i] == 2147000)
-        {
-            continue;
-        }
-        max_dist = std::max(max_dist, table[i][x] + table[x][i]);
+        maxRoundTrip = std::max(maxRoundTrip, dist[i][x] + dist[x][i]);
     }
-    std::cout << max_dist << '\n';
+    std::cout << maxRoundTrip << '\n';
     return 0;
 }

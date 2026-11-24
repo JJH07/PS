@@ -1,49 +1,39 @@
-#include <bits/stdc++.h>
-const int MAX = INT_MAX;
-int n;
-std::vector<int> v;
-std::set<int> good;
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
 int main()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
-    std::cout.tie(NULL);
+    std::cin.tie(nullptr);
 
-    int ans = 0, num;
+    int n;
     std::cin >> n;
+    std::vector<int> numbers(n);
+    for(int &number : numbers)
+    {
+        std::cin >> number;
+    }
+    std::sort(numbers.begin(), numbers.end());
+
+    int answer = 0;
     for(int i = 0; i < n; i++)
     {
-        std::cin >> num;
-        v.push_back(num);
-    }
-    std::sort(v.begin(), v.end());
-    for(auto i = v.begin(); i < v.end(); i++)
-    {
-        int flag = 0;
-        for(auto j = v.begin(); !flag && j < v.end(); j++)
+        bool found = false;
+        for(int j = 0; j < n && !found; j++)
         {
             if(i == j)
             {
                 continue;
             }
-            int num = *i - *j;
-            auto lit = std::lower_bound(v.begin(), v.end(), num);
-            auto uit = std::upper_bound(v.begin(), v.end(), num);
-            if(lit == v.end() || *lit != num)
-            {
-                continue;
-            }
-            for(auto it = lit; it < uit; it++)
-            {
-                if(it != i && it != j)
-                {
-                    flag = 1;
-                    break;
-                }
-            }
+            const int needed = numbers[i] - numbers[j];
+            const auto [first, last] = std::equal_range(numbers.begin(), numbers.end(), needed);
+            const int available = static_cast<int>(last - first)
+                - (numbers[i] == needed) - (numbers[j] == needed);
+            found = available > 0;
         }
-        ans += flag;
+        answer += found;
     }
-    std::cout << ans << '\n';
+    std::cout << answer << '\n';
     return 0;
 }

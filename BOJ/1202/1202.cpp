@@ -1,42 +1,43 @@
 #include <iostream>
 #include <queue>
 #include <set>
-#include <algorithm>
-typedef std::pair<int, int> pii;
-int n, k;
+#include <utility>
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    std::priority_queue<pii> jewel;
-    std::multiset<int> bag;
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, k;
+    std::priority_queue<std::pair<int, int>> jewels;
+    std::multiset<int> bags;
     std::cin >> n >> k;
     for(int i = 0; i < n; i++)
     {
         int mass, value;
         std::cin >> mass >> value;
-        jewel.push({value, mass});
+        jewels.push({value, mass});
     }
     for(int i = 0; i < k; i++)
     {
-        int cap;
-        std::cin >> cap;
-        bag.insert(cap);
+        int capacity;
+        std::cin >> capacity;
+        bags.insert(capacity);
     }
 
-    long long ans = 0;
-    while(!jewel.empty())
+    long long totalValue = 0;
+    while(!jewels.empty() && !bags.empty())
     {
-        auto [value, mass] = jewel.top();
-        jewel.pop();
-        auto lit = bag.lower_bound(mass);
-        if(lit == bag.end())
+        const auto [value, mass] = jewels.top();
+        jewels.pop();
+        const auto it = bags.lower_bound(mass);
+        if(it == bags.end())
         {
             continue;
         }
-        ans += value;
-        bag.erase(lit);
+        totalValue += value;
+        bags.erase(it);
     }
-    std::cout << ans << '\n';
+    std::cout << totalValue << '\n';
     return 0;
 }

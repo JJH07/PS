@@ -1,86 +1,96 @@
-#include <iostream>
-#include <vector>
-#include <queue>
 #include <algorithm>
+#include <iostream>
+#include <queue>
+#include <utility>
+#include <vector>
 
-#define MIN_V -1000000000
-typedef long long ll;
+constexpr long long UNREACHABLE = -1000000000;
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    int n, s, e, m;
-    ll money[101], dist[100];
-    std::vector<std::pair<int, ll>> adj[100];
-    std::queue<int> check_list;
-    bool FLAG = false;
+    int n, start, end, m;
+    long long income[100], dist[100];
+    std::vector<std::pair<int, long long>> adj[100];
+    std::queue<int> q;
+    std::fill(dist, dist + 100, UNREACHABLE);
 
-    std::fill(dist, dist + 100, MIN_V);
-
-    std::cin >> n >> s >> e >> m;
+    std::cin >> n >> start >> end >> m;
     for(int i = 0; i < m; i++)
     {
-        int a, b;
-        ll c;
-        std::cin >> a >> b >> c;
-        adj[a].push_back({b, c});
+        int from, to;
+        long long cost;
+        std::cin >> from >> to >> cost;
+        adj[from].push_back({to, cost});
     }
     for(int i = 0; i < n; i++)
     {
-        std::cin >> money[i];
+        std::cin >> income[i];
     }
-    dist[s] = money[s];
-    for(int i = 1; i <= n; i++)
+    dist[start] = income[start];
+    for(int pass = 1; pass <= n; pass++)
     {
-        for(int j = 0; j < n; j++)
+        bool updated = false;
+        for(int from = 0; from < n; from++)
         {
-            for(auto x : adj[j])
+            if(dist[from] == UNREACHABLE)
             {
-                int next = x.first;
-                int val = x.second;
-                if(dist[j] != MIN_V && dist[next] < dist[j] + money[next] - val)
+                continue;
+            }
+            for(const auto &[to, cost] : adj[from])
+            {
+                const long long profit = dist[from] + income[to] - cost;
+                if(dist[to] < profit)
                 {
-                    dist[next] = dist[j] + money[next] - val;
-                    if(i == n)
+                    dist[to] = profit;
+                    updated = true;
+                    if(pass == n)
                     {
-                        check_list.push(j);
+                        q.push(from);
                     }
                 }
             }
         }
+        if(!updated)
+        {
+            break;
+        }
     }
-    bool visited[100] = {0};
-    while(!check_list.empty())
+
+    bool visited[100]{};
+    bool unbounded = false;
+    while(!q.empty())
     {
-        int front = check_list.front();
-        check_list.pop();
-        if(front == e)
+        const int node = q.front();
+        q.pop();
+        if(node == end)
         {
-            FLAG = true;
-            continue;
+            unbounded = true;
+            break;
         }
-        for(auto x : adj[front])
+        for(const auto &edge : adj[node])
         {
-            if(visited[x.first])
+            const int next = edge.first;
+            if(!visited[next])
             {
-                continue;
+                visited[next] = true;
+                q.push(next);
             }
-            visited[x.first] = true;
-            check_list.push(x.first);
         }
     }
-    if(dist[e] == MIN_V)
+    if(dist[end] == UNREACHABLE)
     {
         std::cout << "gg\n";
     }
-    else if(FLAG)
+    else if(unbounded)
     {
         std::cout << "Gee\n";
     }
     else
     {
-        std::cout << dist[e] << '\n';
+        std::cout << dist[end] << '\n';
     }
     return 0;
 }
