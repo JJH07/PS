@@ -24,6 +24,6 @@ int main()
             initials += static_cast<char>('a' + i);
         }
     }
-    std::cout << (initials.empty() ? "PREDAJA" : initials) << '\n';
+    std::cout << (initials.empty() ? "PREDAJA\n" : initials);
     return 0;
 }

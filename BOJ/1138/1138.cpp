@@ -29,7 +29,7 @@ int main()
     }
     for(int pos = 1; pos <= n; pos++)
     {
-        std::cout << lineup[pos] << (pos == n ? '\n' : ' ');
+        std::cout << lineup[pos] << ' ';
     }
     return 0;
 }
