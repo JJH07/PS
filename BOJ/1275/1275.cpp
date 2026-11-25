@@ -1,25 +1,23 @@
-//
-//  main.cpp
-//  1275
-//
-//  Created by 진준호 on 2020/05/30.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <cmath>
 
-typedef long long ll;
-ll init(std::vector<ll> &list, std::vector<ll> &tree, int node, int start, int end)
+using ll = long long;
+
+ll build(const std::vector<ll> &values, std::vector<ll> &tree, int node, int start, int end)
 {
     if(start == end)
     {
-        return tree[node] = list[start];
+        return tree[node] = values[start];
     }
-    return tree[node] = init(list, tree, node * 2, start, (start + end) / 2) + init(list, tree, node * 2 + 1, (start + end) / 2 + 1, end);
+    const int mid = (start + end) / 2;
+    return tree[node] = build(values, tree, node * 2, start, mid)
+        + build(values, tree, node * 2 + 1, mid + 1, end);
 }
-ll sum(std::vector<ll> &tree, int node, int start, int end, int left, int right)
+
+ll querySum(const std::vector<ll> &tree, int node, int start, int end, int left, int right)
 {
     if(end < left || right < start)
     {
@@ -29,47 +27,54 @@ ll sum(std::vector<ll> &tree, int node, int start, int end, int left, int right)
     {
         return tree[node];
     }
-    return sum(tree, node * 2, start, (start + end) / 2, left, right) + sum(tree, node * 2 + 1, (start + end) / 2 + 1, end, left, right);
+    const int mid = (start + end) / 2;
+    return querySum(tree, node * 2, start, mid, left, right)
+        + querySum(tree, node * 2 + 1, mid + 1, end, left, right);
 }
+
 void update(std::vector<ll> &tree, int node, int start, int end, int index, ll diff)
 {
-    if(index < start || end < index)
-    {
-        return ;
-    }
     tree[node] += diff;
-    if(start != end)
+    if(start == end)
     {
-        update(tree, node * 2, start, (start + end) / 2, index, diff);
-        update(tree, node * 2 + 1, (start + end) / 2 + 1, end, index, diff);
+        return;
+    }
+    const int mid = (start + end) / 2;
+    if(index <= mid)
+    {
+        update(tree, node * 2, start, mid, index, diff);
+    }
+    else
+    {
+        update(tree, node * 2 + 1, mid + 1, end, index, diff);
     }
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
     int n, q;
     std::cin >> n >> q;
-    std::vector<ll> list(n), tree(1 << ((int)ceil(log2(n)) + 1));
-    for(int i = 0; i < n; i++)
+    std::vector<ll> values(n), tree(4 * n);
+    for(ll &value : values)
     {
-        std::cin >> list[i];
+        std::cin >> value;
     }
-    init(list, tree, 1, 0, n - 1);
+    build(values, tree, 1, 0, n - 1);
     for(int i = 0; i < q; i++)
     {
-        int x, y, a;
-        ll b;
-        std::cin >> x >> y >> a >> b;
-        if(x > y)
+        int left, right, index;
+        ll value;
+        std::cin >> left >> right >> index >> value;
+        if(left > right)
         {
-            std::swap(x, y);
+            std::swap(left, right);
         }
-        std::cout << sum(tree, 1, 0, n - 1, x - 1, y - 1) << '\n';
-        update(tree, 1, 0, n - 1, a - 1, b - list[a - 1]);
-        list[a - 1] = b;
+        std::cout << querySum(tree, 1, 0, n - 1, left - 1, right - 1) << '\n';
+        update(tree, 1, 0, n - 1, index - 1, value - values[index - 1]);
+        values[index - 1] = value;
     }
     return 0;
 }

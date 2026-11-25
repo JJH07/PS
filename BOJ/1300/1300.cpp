@@ -1,43 +1,33 @@
-//
-//  main.cpp
-//  1300
-//
-//  Created by 진준호 on 2019/12/26.
-//  Copyright © 2019 진준호. All rights reserved.
-//
+// Copyright © 2019 진준호. All rights reserved.
 
+#include <algorithm>
 #include <iostream>
 
-long long n, k;
-long long binary(long long l, long long r)
+int main()
 {
-    if(l > r)
-    {
-        return l;
-    }
-    long long mid = (l + r) / 2;
-    long long cnt = 0;
-    for(int i = 1; i <= n; i++)
-    {
-        cnt += (n > (mid / i) ? mid / i : n);
-    }
-    if(cnt < k)
-    {
-        return binary(mid + 1, r);
-    }
-    else
-    {
-        return binary(l, mid - 1);
-    }
-}
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    long long n, k;
     std::cin >> n >> k;
-    std::cout << binary(1, k) << '\n';
-    
+    long long left = 1, right = k;
+    while(left < right)
+    {
+        const long long mid = left + (right - left) / 2;
+        long long count = 0;
+        for(long long row = 1; row <= n && count < k; row++)
+        {
+            count += std::min(n, mid / row);
+        }
+        if(count < k)
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid;
+        }
+    }
+    std::cout << left << '\n';
     return 0;
 }

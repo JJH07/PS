@@ -1,42 +1,27 @@
 #include <iostream>
-#include <string>
 #include <map>
-#include <algorithm>
-int Max;
-std::string Name;
-std::map<std::string, int> table;
+#include <string>
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    int n;
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, bestCount = 0;
+    std::string bestTitle;
+    std::map<std::string, int> counts;
     std::cin >> n;
-    while(n--)  
+    while(n--)
     {
         std::string book;
         std::cin >> book;
-        if(table.find(book) == table.end())
+        const int count = ++counts[book];
+        if(count > bestCount || (count == bestCount && book < bestTitle))
         {
-            table.insert({book, 1});
-        }
-        else
-        {
-            table[book]++;
-        }
-        if(table[book] < Max)
-        {
-            continue;
-        }
-        else if(table[book] > Max)
-        {
-            Max = table[book];
-            Name = book;
-        }
-        else if(book.compare(Name) < 0)
-        {
-            Name = book;
+            bestCount = count;
+            bestTitle = book;
         }
     }
-    std::cout << Name << '\n';
+    std::cout << bestTitle << '\n';
     return 0;
 }

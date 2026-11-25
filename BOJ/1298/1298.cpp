@@ -3,42 +3,42 @@
 #include <vector>
 const int MAX = 101;
 
-int n, m, d[MAX];
-std::vector<int> list[MAX];
-bool check[MAX];
+int n, m, match[MAX];
+std::vector<int> adj[MAX];
+bool visited[MAX];
 bool dfs(int person)
 {
-    for(int notebook : list[person])
+    for(int notebook : adj[person])
     {
-        if(check[notebook])
+        if(visited[notebook])
         {
             continue;
         }
-        check[notebook] = 1;
-        if(d[notebook] == 0 || dfs(d[notebook]))
+        visited[notebook] = true;
+        if(match[notebook] == 0 || dfs(match[notebook]))
         {
-            d[notebook] = person;
-            return 1;
+            match[notebook] = person;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     std::cin >> n >> m;
     for(int i = 1; i <= m; i++)
     {
         int a, b;
         std::cin >> a >> b;
-        list[a].push_back(b);
+        adj[a].push_back(b);
     }
     int ans = 0;
     for(int i = 1; i <= n; i++)
     {
-        std::memset(check, 0, sizeof(check));
+        std::memset(visited, 0, sizeof(visited));
         if(dfs(i))
         {
             ans++;

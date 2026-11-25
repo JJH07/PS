@@ -1,64 +1,67 @@
-#include <bits/stdc++.h>
-#define MAX 1 << 20
-int n, map[20][20], dp[MAX];
-void flip(int x)
+#include <algorithm>
+#include <iostream>
+
+constexpr int MAX_N = 20;
+int n, board[MAX_N][MAX_N], dp[1 << MAX_N];
+
+void flipRow(int row)
 {
-    for(int y = 0; y < n; y++)
+    for(int col = 0; col < n; col++)
     {
-        map[x][y] = map[x][y] ? 0 : 1;
+        board[row][col] ^= 1;
     }
 }
-int count()
+
+int minTails()
 {
-    int ret = 0;
-    for(int y = 0; y < n; y++)
+    int total = 0;
+    for(int col = 0; col < n; col++)
     {
-        int c = 0;
-        for(int x = 0; x < n; x++)
+        int tails = 0;
+        for(int row = 0; row < n; row++)
         {
-            c += map[x][y];
+            tails += board[row][col];
         }
-        ret += std::min(c, n - c);
+        total += std::min(tails, n - tails);
     }
-    return ret;
+    return total;
 }
-int solve(int state)
+
+int solve(int mask)
 {
-    int &ret = dp[state];
-    if(ret != -1)
+    int &result = dp[mask];
+    if(result != -1)
     {
-        return ret;
+        return result;
     }
-    ret = count();
-    for(int next = 0; next < n; next++)
+    result = minTails();
+    for(int row = 0; row < n && result > 0; row++)
     {
-        if(state & (1 << next))
+        if(mask & (1 << row))
         {
             continue;
         }
-        flip(next);
-        ret = std::min(ret, solve(state + (1 << next)));
-        flip(next);
+        flipRow(row);
+        result = std::min(result, solve(mask | (1 << row)));
+        flipRow(row);
     }
-    return ret;
+    return result;
 }
+
 int main()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
-    std::memset(dp, -1, sizeof(dp));
+    std::cin.tie(nullptr);
 
     std::cin >> n;
-    for(int i = 0; i < n; i++)
+    std::fill(dp, dp + (1 << n), -1);
+    for(int row = 0; row < n; row++)
     {
-        for(int j = 0; j < n; j++)
+        for(int col = 0; col < n; col++)
         {
-            char c;
-            std::cin >> c;
-            if(c == 'T')
-            {
-                map[i][j] = 1;
-            }
+            char coin;
+            std::cin >> coin;
+            board[row][col] = coin == 'T';
         }
     }
     std::cout << solve(0) << '\n';

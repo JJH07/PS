@@ -1,61 +1,76 @@
-#include <bits/stdc++.h>
-#define MAX 500000
+#include <iostream>
 
-int tree[MAX * 4];
+constexpr int MAX_N = 500000;
+int tree[MAX_N * 4];
 
-void update(int node, int start, int end, int idx, int val)
+void build(int node, int start, int end)
 {
-    if(end < idx || idx < start)
-    {
-        return ;
-    }
     if(start == end)
     {
-        tree[node] += val;
-        return ;
+        std::cin >> tree[node];
+        return;
     }
-    update(node * 2, start, (start + end) / 2, idx, val);
-    update(node * 2 + 1, (start + end) / 2 + 1, end, idx, val);
+    const int mid = (start + end) / 2;
+    build(node * 2, start, mid);
+    build(node * 2 + 1, mid + 1, end);
     tree[node] = tree[node * 2] + tree[node * 2 + 1];
 }
-int query(int node, int start, int end, int nth)
+
+void update(int node, int start, int end, int index, int delta)
+{
+    tree[node] += delta;
+    if(start == end)
+    {
+        return;
+    }
+    const int mid = (start + end) / 2;
+    if(index <= mid)
+    {
+        update(node * 2, start, mid, index, delta);
+    }
+    else
+    {
+        update(node * 2 + 1, mid + 1, end, index, delta);
+    }
+}
+
+int findKth(int node, int start, int end, int rank)
 {
     if(start == end)
     {
         return start;
     }
-    if(nth <= tree[node * 2])
+    const int mid = (start + end) / 2;
+    const int leftCount = tree[node * 2];
+    if(rank <= leftCount)
     {
-        return query(node * 2, start, (start + end) / 2, nth);
+        return findKth(node * 2, start, mid, rank);
     }
-    return query(node * 2 + 1, (start + end) / 2 + 1, end, nth - tree[node * 2]);
+    return findKth(node * 2 + 1, mid + 1, end, rank - leftCount);
 }
+
 int main()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
     int n, m;
     std::cin >> n;
-    for(int i = 1; i <= n; i++)
-    {
-        int t;
-        std::cin >> t;
-        update(1, 1, n, i, t);
-    }
+    build(1, 1, n);
     std::cin >> m;
     while(m--)
     {
-        int op, i, a;
-        std::cin >> op >> i;
+        int op, value;
+        std::cin >> op >> value;
         if(op == 1)
         {
-            std::cin >> a;
-            update(1, 1, n, i, a);
+            int delta;
+            std::cin >> delta;
+            update(1, 1, n, value, delta);
         }
         else
         {
-            std::cout << query(1, 1, n, i) << '\n';
+            std::cout << findKth(1, 1, n, value) << '\n';
         }
     }
     return 0;

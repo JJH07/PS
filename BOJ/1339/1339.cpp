@@ -1,91 +1,64 @@
-//
-//  main.cpp
-//  1339
-//
-//  Created by 진준호 on 2020/01/14.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
-#include <algorithm>
 
-std::vector<std::string> list;
-std::vector<char> w_list;
-int n, max_v, exist[30];
+std::vector<char> letters;
+long long weights[26], best;
+int digits[26];
 
-bool comp(const std::string &a, const std::string &b)
+void assignDigits(int digit, int assigned, long long score)
 {
-    return a.length() > b.length();
-}
-void permutation(int number, int cnt)
-{
-    int sum = 0;
-    if(cnt == w_list.size())
+    if(assigned == static_cast<int>(letters.size()))
     {
-        for(std::vector<std::string>::iterator it = list.begin(); it !=  list.end(); it++)
-        {
-            int rp = 1;
-            for(std::string::reverse_iterator rit = it->rbegin(); rit != it->rend(); rit++)
-            {
-                sum += (exist[*rit - 'A'] * rp);
-                rp *= 10;
-            }
-        }
-        max_v = std::max(max_v, sum);
+        best = std::max(best, score);
+        return;
     }
-    else
+    for(char letter : letters)
     {
-        int check = 0;
-        for(std::vector<char>::iterator it = w_list.begin(); it != w_list.end(); it++)
+        const int index = letter - 'A';
+        if(digits[index] != -1)
         {
-            if(exist[*it - 'A'] == -1)
-            {
-                check++;
-                exist[*it - 'A'] = number;
-                permutation(number - 1, cnt + 1);
-                exist[*it - 'A'] = -1;
-            }
+            continue;
         }
-        if(check == 0 && cnt < w_list.size())
-        {
-            permutation(number, cnt + 1);
-        }
+        digits[index] = digit;
+        assignDigits(digit - 1, assigned + 1, score + weights[index] * digit);
+        digits[index] = -1;
     }
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    std::fill(exist, exist + 30, -1);
-    
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    std::fill(digits, digits + 26, -1);
+    int n;
     std::cin >> n;
     for(int i = 0; i < n; i++)
     {
-        std::string tmp;
-        std::cin >> tmp;
-        list.push_back(tmp);
-    }
-    for(std::vector<std::string>::iterator it = list.begin(); it != list.end(); it++)
-    {
-        for(std::string::iterator sit = it->begin(); sit != it->end(); sit++)
+        std::string word;
+        std::cin >> word;
+        for(char letter : word)
         {
-            if(exist[*sit - 'A'] == -1)
+            const int index = letter - 'A';
+            if(digits[index] == -1)
             {
-                exist[*sit - 'A'] = 1;
-                w_list.push_back(*sit);
+                digits[index] = 0;
+                letters.push_back(letter);
             }
         }
+        long long place = 1;
+        for(auto it = word.rbegin(); it != word.rend(); ++it)
+        {
+            weights[*it - 'A'] += place;
+            place *= 10;
+        }
     }
-    
-    std::fill(exist, exist + 30, -1);
-    
-    permutation(9, 0);
-    
-    std::cout << max_v << '\n';
+    std::fill(digits, digits + 26, -1);
+    assignDigits(9, 0, 0);
+    std::cout << best << '\n';
     return 0;
 }

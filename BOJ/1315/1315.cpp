@@ -1,74 +1,64 @@
-//
-//  main.cpp
-//  1315
-//
-//  Created by 진준호 on 2020/03/03.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <cstring>
 
-struct quest{
-    int STR;
-    int INT;
-    int PNT;
+struct Quest
+{
+    int strReq;
+    int intReq;
+    int reward;
 };
-int n, memo[1001][1001];
-std::vector<quest> quests;
-int solve(int s, int i)
+int n, dp[1001][1001];
+std::vector<Quest> quests;
+int maxQuests(int str, int intel)
 {
-    int &ret = memo[s][i];
-    if(ret != -1)
+    int &result = dp[str][intel];
+    if(result != -1)
     {
-        return ret;
+        return result;
     }
-    ret = 0;
-    int point = 0;
-    for(int next = 0; next < n; next++)
+    result = 0;
+    int points = 0;
+    for(const Quest &quest : quests)
     {
-        if(s >= quests[next].STR || i >= quests[next].INT)
+        if(str >= quest.strReq || intel >= quest.intReq)
         {
-            point += quests[next].PNT;
-            ret++;
+            points += quest.reward;
+            result++;
         }
     }
-    for(int next = 0; next < n; next++)
+    const int remaining = points - str - intel + 2;
+    for(const Quest &quest : quests)
     {
-        if(quests[next].STR > s && point - s - i + 2 >= quests[next].STR - s)
+        if(quest.strReq > str && remaining >= quest.strReq - str)
         {
-            ret = std::max(ret, solve(quests[next].STR, i));
+            result = std::max(result, maxQuests(quest.strReq, intel));
         }
-        if(quests[next].INT > i && point - s - i + 2 >= quests[next].INT - i)
+        if(quest.intReq > intel && remaining >= quest.intReq - intel)
         {
-            ret = std::max(ret, solve(s, quests[next].INT));
+            result = std::max(result, maxQuests(str, quest.intReq));
         }
     }
-    return ret;
+    return result;
 }
-bool comp(const quest &a, const quest &b)
+int main()
 {
-    return (a.INT + a.STR) < (b.INT + b.STR);
-}
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    std::memset(memo, -1, sizeof(memo));
-    
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    std::memset(dp, -1, sizeof(dp));
+
     std::cin >> n;
-    
+
     for(int i = 0; i < n; i++)
     {
-        int a, b, c;
-        std::cin >> a >> b >> c;
-        quests.push_back({a, b, c});
+        Quest quest;
+        std::cin >> quest.strReq >> quest.intReq >> quest.reward;
+        quests.push_back(quest);
     }
-    std::sort(quests.begin(), quests.end(), comp);
-    
-    std::cout << solve(1, 1) << '\n';
+
+    std::cout << maxQuests(1, 1) << '\n';
     return 0;
 }
