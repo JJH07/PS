@@ -1,86 +1,94 @@
+#include <algorithm>
 #include <iostream>
-#include <string>
-#include <cstring>
 #include <queue>
-#define MAP_SZ 50
-#define MAX 100
-typedef std::pair<int, int> pii;
-int r, c, c_sz, p_sz, map[MAP_SZ][MAP_SZ], match[MAX];
-std::vector<pii> Car, link[MAX];
-bool check[MAX];
-int dx[4] = {1, 0, -1, 0}, dy[4] = {0, 1, 0, -1};
-void input()
+#include <string>
+#include <utility>
+#include <vector>
+
+constexpr int MAP_SIZE = 50;
+constexpr int MAX = 100;
+constexpr int dr[4] = {1, 0, -1, 0};
+constexpr int dc[4] = {0, 1, 0, -1};
+
+struct State
 {
-    std::string t;
-    std::cin >> r >> c;
-    for(int i = 0; i < r; i++)
+    int row, col, dist;
+};
+
+int rows, cols, carCount, parkCount;
+int grid[MAP_SIZE][MAP_SIZE], match[MAX];
+std::vector<std::pair<int, int>> cars, adj[MAX];
+bool visited[MAX];
+
+void readInput()
+{
+    std::cin >> rows >> cols;
+    for(int row = 0; row < rows; row++)
     {
-        std::cin >> t;
-        for(int j = 0; j < c; j++)
+        std::string line;
+        std::cin >> line;
+        for(int col = 0; col < cols; col++)
         {
-            if(t[j] == 'C')
+            if(line[col] == 'C')
             {
-                Car.push_back({i, j});
+                cars.push_back({row, col});
             }
-            else if(t[j] == 'P')
+            else if(line[col] == 'P')
             {
-                map[i][j] = ++p_sz;
+                grid[row][col] = ++parkCount;
             }
-            else if(t[j] == 'X')
+            else if(line[col] == 'X')
             {
-                map[i][j] = -1;
+                grid[row][col] = -1;
             }
         }
     }
-    c_sz = (int)Car.size();
+    carCount = cars.size();
 }
-void init_link()
-{
-    std::queue<std::pair<int, pii>> q;
-    bool visited[MAP_SZ][MAP_SZ];
 
-    for(int i = 0; i < c_sz; i++)
+void buildEdges()
+{
+    for(int car = 0; car < carCount; car++)
     {
-        std::memset(visited, 0, sizeof(visited));
-        pii s = Car[i];
-        q.push({0, s});
-        visited[s.first][s.second] = true;
+        bool seen[MAP_SIZE][MAP_SIZE]{};
+        std::queue<State> q;
+        const auto [row, col] = cars[car];
+        q.push({row, col, 0});
+        seen[row][col] = true;
         while(!q.empty())
         {
-            auto [dist, pos] = q.front();
+            const State current = q.front();
             q.pop();
-            if(map[pos.first][pos.second] > 0)
+            if(grid[current.row][current.col] > 0)
             {
-                link[i].push_back({map[pos.first][pos.second] - 1, dist});
+                adj[car].push_back({grid[current.row][current.col] - 1, current.dist});
             }
-            for(int di = 0; di < 4; di++)
+            for(int dir = 0; dir < 4; dir++)
             {
-                int nx = dx[di] + pos.first;
-                int ny = dy[di] + pos.second;
-                if(nx < 0 || ny < 0 || nx >= r || ny >= c || map[nx][ny] == -1 || visited[nx][ny])
+                const int nextRow = current.row + dr[dir];
+                const int nextCol = current.col + dc[dir];
+                if(nextRow < 0 || nextRow >= rows || nextCol < 0 || nextCol >= cols
+                    || grid[nextRow][nextCol] == -1 || seen[nextRow][nextCol])
                 {
                     continue;
                 }
-                q.push({dist + 1, {nx, ny}});
-                visited[nx][ny] = true;
+                seen[nextRow][nextCol] = true;
+                q.push({nextRow, nextCol, current.dist + 1});
             }
         }
     }
 }
+
 bool dfs(int car, int limit)
 {
-    if(check[car])
+    if(visited[car])
     {
         return false;
     }
-    check[car] = true;
-    for(auto [park, dist] : link[car])
+    visited[car] = true;
+    for(const auto &[park, dist] : adj[car])
     {
-        if(dist > limit)
-        {
-            continue;
-        }
-        if(match[park] == -1 || dfs(match[park], limit))
+        if(dist <= limit && (match[park] == -1 || dfs(match[park], limit)))
         {
             match[park] = car;
             return true;
@@ -88,37 +96,58 @@ bool dfs(int car, int limit)
     }
     return false;
 }
-int b_search()
+
+bool canMatch(int limit)
 {
-    int s = 0, e = MAP_SZ * MAP_SZ, matched, ret = 1e9;
-    while(s <= e)
+    std::fill(match, match + MAX, -1);
+    for(int car = 0; car < carCount; car++)
     {
-        matched = 0;
-        int mid = (s + e) / 2;
-        std::memset(match, -1, sizeof(match));
-        for(int i = 0; i < c_sz; i++)
+        std::fill(visited, visited + MAX, false);
+        if(!dfs(car, limit))
         {
-            std::memset(check, 0, sizeof(check));
-            matched += dfs(i, mid);
+            return false;
         }
-        if(matched == c_sz)
+    }
+    return true;
+}
+
+int minTime()
+{
+    int left = 0, right = MAP_SIZE * MAP_SIZE, answer = -1;
+    while(left <= right)
+    {
+        const int mid = (left + right) / 2;
+        if(canMatch(mid))
         {
-            ret = std::min(ret, mid);
-            e = mid - 1;
+            answer = mid;
+            right = mid - 1;
         }
         else
         {
-            s = mid + 1;
+            left = mid + 1;
         }
     }
-    return ret == 1e9 ? -1 : ret;
+    return answer;
 }
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    input();
-    init_link();
-    std::cout << (c_sz == 0 ? 0 : b_search()) << '\n';
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    readInput();
+    if(carCount == 0)
+    {
+        std::cout << "0\n";
+    }
+    else if(carCount > parkCount)
+    {
+        std::cout << "-1\n";
+    }
+    else
+    {
+        buildEdges();
+        std::cout << minTime() << '\n';
+    }
     return 0;
 }

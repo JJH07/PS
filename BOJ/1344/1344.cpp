@@ -1,17 +1,10 @@
-//
-//  main.cpp
-//  1344
-//
-//  Created by 진준호 on 2020/02/11.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
-#include <cmath>
 
-double a, b, dp[19][19][19], ans;
+double probA, probB, dp[19][19][19], answer;
 
-bool is_prime(int num)
+bool isPrime(int num)
 {
     if(num == 2 || num == 3 || num == 5 || num == 7 || num == 11 || num == 13 || num == 17)
     {
@@ -19,40 +12,39 @@ bool is_prime(int num)
     }
     return false;
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    std::cin >> a >> b;
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    a /= 100.0;
-    b /= 100.0;
-    
-    dp[1][0][0] = (1 - a) * (1 - b);
-    dp[1][1][0] = a * (1 - b);
-    dp[1][0][1] = (1 - a) * b;
-    dp[1][1][1] = a * b;
-    for(int i = 2; i <= 18; i++)
+    std::cin >> probA >> probB;
+
+    probA /= 100.0;
+    probB /= 100.0;
+
+    dp[1][0][0] = (1 - probA) * (1 - probB);
+    dp[1][1][0] = probA * (1 - probB);
+    dp[1][0][1] = (1 - probA) * probB;
+    dp[1][1][1] = probA * probB;
+    for(int round = 2; round <= 18; round++)
     {
-        for(int j = 0; j <= i; j++)
+        for(int goalsA = 0; goalsA <= round; goalsA++)
         {
-            for(int k = 0; k <= i; k++)
+            for(int goalsB = 0; goalsB <= round; goalsB++)
             {
-                if(j > 0)
+                if(goalsA > 0)
                 {
-                    dp[i][j][k] += dp[i-1][j-1][k] * a * (1 - b);
+                    dp[round][goalsA][goalsB] += dp[round-1][goalsA-1][goalsB] * probA * (1 - probB);
                 }
-                if(k > 0)
+                if(goalsB > 0)
                 {
-                    dp[i][j][k] += dp[i-1][j][k-1] * (1 - a) * b;
+                    dp[round][goalsA][goalsB] += dp[round-1][goalsA][goalsB-1] * (1 - probA) * probB;
                 }
-                if(j > 0 && k > 0)
+                if(goalsA > 0 && goalsB > 0)
                 {
-                    dp[i][j][k] += dp[i-1][j-1][k-1] * a * b;
+                    dp[round][goalsA][goalsB] += dp[round-1][goalsA-1][goalsB-1] * probA * probB;
                 }
-                dp[i][j][k] += dp[i-1][j][k] * (1 - a) * (1 - b);
+                dp[round][goalsA][goalsB] += dp[round-1][goalsA][goalsB] * (1 - probA) * (1 - probB);
             }
         }
     }
@@ -60,12 +52,12 @@ int main(int argc, const char * argv[]) {
     {
         for(int j = 0; j < 19; j++)
         {
-            if(is_prime(i) || is_prime(j))
+            if(isPrime(i) || isPrime(j))
             {
-                ans += dp[18][i][j];
+                answer += dp[18][i][j];
             }
         }
     }
-    std::cout << ans << '\n';
+    std::cout << answer << '\n';
     return 0;
 }

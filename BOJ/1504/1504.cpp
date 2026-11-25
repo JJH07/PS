@@ -1,109 +1,64 @@
-//
-//  main.cpp
-//  1504
-//
-//  Created by 진준호 on 2020/05/12.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
-#include <iostream>
-#include <vector>
 #include <algorithm>
+#include <functional>
+#include <iostream>
 #include <queue>
+#include <utility>
+#include <vector>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int n, e, v1, v2, distance_v1[801], distance_v2[801], distance_1[801];
-    std::fill(distance_v1, distance_v1 + 801, 3 * 800 * 1000 + 1);
-    std::fill(distance_v2, distance_v2 + 801, 3 * 800 * 1000 + 1);
-    std::fill(distance_1, distance_1 + 801, 3 * 800 * 1000 + 1);
-    
+using pii = std::pair<int, int>;
+constexpr int INF = 3 * 800 * 1000 + 1;
+
+std::vector<int> dijkstra(int start, const std::vector<std::vector<pii>> &adj)
+{
+    std::vector<int> dist(adj.size(), INF);
+    std::priority_queue<pii, std::vector<pii>, std::greater<pii>> pq;
+    dist[start] = 0;
+    pq.push({0, start});
+    while(!pq.empty())
+    {
+        const auto [cost, node] = pq.top();
+        pq.pop();
+        if(dist[node] < cost)
+        {
+            continue;
+        }
+        for(const auto &[next, weight] : adj[node])
+        {
+            const int nextDist = cost + weight;
+            if(nextDist < dist[next])
+            {
+                dist[next] = nextDist;
+                pq.push({nextDist, next});
+            }
+        }
+    }
+    return dist;
+}
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, e, v1, v2;
     std::cin >> n >> e;
-    std::vector<std::pair<int, int>> road[801];
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
+    std::vector<std::vector<pii>> adj(n + 1);
     for(int i = 0; i < e; i++)
     {
-        int a, b, c;
-        std::cin >> a >> b >> c;
-        road[a].push_back({b, c});
-        road[b].push_back({a, c});
+        int from, to, weight;
+        std::cin >> from >> to >> weight;
+        adj[from].push_back({to, weight});
+        adj[to].push_back({from, weight});
     }
     std::cin >> v1 >> v2;
-    
-    distance_1[1] = 0;
-    pq.push({0, 1});
-    while(!pq.empty())
-    {
-        int node = pq.top().second;
-        int dist = pq.top().first;
-        pq.pop();
-        if(distance_1[node] < dist)
-        {
-            continue;
-        }
-        for(auto next : road[node])
-        {
-            int next_node = next.first;
-            int next_dist = next.second + dist;
-            if(distance_1[next_node] > next_dist)
-            {
-                distance_1[next_node] = next_dist;
-                pq.push({next_dist, next_node});
-            }
-        }
-    }
 
-    distance_v1[v1] = 0;
-    pq.push({0, v1});
-    while(!pq.empty())
-    {
-        int node = pq.top().second;
-        int dist = pq.top().first;
-        pq.pop();
-        if(distance_v1[node] < dist)
-        {
-            continue;
-        }
-        for(auto next : road[node])
-        {
-            int next_node = next.first;
-            int next_dist = next.second + dist;
-            if(distance_v1[next_node] > next_dist)
-            {
-                distance_v1[next_node] = next_dist;
-                pq.push({next_dist, next_node});
-            }
-        }
-    }
-    
-    distance_v2[v2] = 0;
-    pq.push({0, v2});
-    while(!pq.empty())
-    {
-        int node = pq.top().second;
-        int dist = pq.top().first;
-        pq.pop();
-        if(distance_v2[node] < dist)
-        {
-            continue;
-        }
-        for(auto next : road[node])
-        {
-            int next_node = next.first;
-            int next_dist = next.second + dist;
-            if(distance_v2[next_node] > next_dist)
-            {
-                distance_v2[next_node] = next_dist;
-                pq.push({next_dist, next_node});
-            }
-        }
-    }
-    int ans = std::min(distance_1[v1] + distance_v1[v2] + distance_v2[n], distance_1[v2] + distance_v2[v1] + distance_v1[n]);
-    
-    std::cout << (ans >= 3 * 800 * 1000 + 1 ? -1 : ans) << '\n';
+    const auto dist1 = dijkstra(1, adj);
+    const auto distV1 = dijkstra(v1, adj);
+    const auto distV2 = dijkstra(v2, adj);
+    const int answer = std::min(dist1[v1] + distV1[v2] + distV2[n],
+                                dist1[v2] + distV2[v1] + distV1[n]);
+    std::cout << (answer >= INF ? -1 : answer) << '\n';
     return 0;
 }

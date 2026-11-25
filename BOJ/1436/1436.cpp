@@ -1,23 +1,22 @@
 #include <iostream>
 #include <string>
-#include <algorithm>
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    int n, cnt = 0;
+    int n, count = 0;
     std::cin >> n;
-    for(int i = 666; i <= 10000000; i++)
+    for(int number = 666; number <= 10000000; number++)
     {
-        std::string t = std::to_string(i);
-        if(t.find("666") != -1)
+        std::string text = std::to_string(number);
+        if(text.find("666") != std::string::npos)
         {
-            ++cnt;
+            ++count;
         }
-        if(cnt == n)
+        if(count == n)
         {
-            std::cout << i << '\n';
+            std::cout << number << '\n';
             break;
         }
     }

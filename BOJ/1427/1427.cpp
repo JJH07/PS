@@ -1,8 +1,10 @@
-#include <bits/stdc++.h>
-#define fastio std::ios::sync_with_stdio(0); std::cin.tie(0); std::cout.tie(0);
+#include <iostream>
+#include <queue>
 
-int main() {
-    fastio;
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     int x;
     std::priority_queue<int> pq;
     std::cin >> x;
@@ -13,9 +15,9 @@ int main() {
     }
     while(!pq.empty())
     {
-        auto node = pq.top();
+        const int digit = pq.top();
         pq.pop();
-        std::cout << node;
+        std::cout << digit;
     }
     return 0;
 }
