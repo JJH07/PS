@@ -1,41 +1,40 @@
+#include <functional>
 #include <iostream>
 #include <queue>
-#include <algorithm>
+#include <vector>
 
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    int n, mid = 10001;
-    std::priority_queue<int> l;
-    std::priority_queue<int, std::vector<int>, std::greater<int>> r;
+    int n;
+    std::priority_queue<int> lower;
+    std::priority_queue<int, std::vector<int>, std::greater<int>> upper;
     std::cin >> n;
     for(int i = 0; i < n; i++)
     {
         int number;
         std::cin >> number;
-        if(mid > number)
+        if(lower.empty() || number < lower.top())
         {
-            l.push(number);
+            lower.push(number);
         }
         else
         {
-            r.push(number);
+            upper.push(number);
         }
-        while(l.size() < r.size())
+        if(lower.size() < upper.size())
         {
-            l.push(r.top());
-            r.pop();
+            lower.push(upper.top());
+            upper.pop();
         }
-        while(l.size() > r.size() + 1)
+        else if(lower.size() > upper.size() + 1)
         {
-            r.push(l.top());
-            l.pop();
+            upper.push(lower.top());
+            lower.pop();
         }
-        mid = l.top();
-        std::cout << mid << '\n';
+        std::cout << lower.top() << '\n';
     }
     return 0;
 }
-

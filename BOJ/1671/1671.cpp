@@ -1,23 +1,21 @@
-#include <iostream>
-#include <cstring>
-#include <vector>
 #include <algorithm>
+#include <iostream>
+#include <vector>
 
-const int MAX = 51;
+constexpr int MAX = 51;
 
-struct shark{
-    int SZ;
-    int SPD;
-    int INT;
-} sharks[MAX];
-std::vector<int> list[MAX];
-int n, d[MAX];
-bool checked[MAX];
-
-void INIT()
+struct Shark
 {
-    bool adj[MAX][MAX];
-    std::memset(adj, 0, sizeof(adj));
+    int size, speed, intel;
+};
+
+Shark sharks[MAX];
+std::vector<int> adj[MAX];
+int n, match[MAX];
+bool visited[MAX];
+
+void buildEdges()
+{
     for(int i = 1; i <= n; i++)
     {
         for(int j = 1; j <= n; j++)
@@ -26,58 +24,62 @@ void INIT()
             {
                 continue;
             }
-            shark &x = sharks[i];
-            shark &y = sharks[j];
-            if(!adj[j][i] && x.SZ >= y.SZ && x.SPD >= y.SPD && x.INT >= y.INT)
+            const Shark &a = sharks[i];
+            const Shark &b = sharks[j];
+            const bool equal = a.size == b.size && a.speed == b.speed && a.intel == b.intel;
+            if(equal && i > j)
             {
-                adj[i][j] = 1;
-                list[i].push_back(j);
+                continue;
+            }
+            if(a.size >= b.size && a.speed >= b.speed && a.intel >= b.intel)
+            {
+                adj[i].push_back(j);
             }
         }
     }
 }
-int dfs(int s)
+
+bool dfs(int shark)
 {
-    for(int next : list[s])
+    for(int next : adj[shark])
     {
-        if(checked[next])
+        if(visited[next])
         {
             continue;
         }
-        checked[next] = 1;
-        if(d[next] == 0 || dfs(d[next]))
+        visited[next] = true;
+        if(match[next] == 0 || dfs(match[next]))
         {
-            d[next] = s;
-            return 1;
+            match[next] = shark;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     std::cin >> n;
     for(int i = 1; i <= n; i++)
     {
-        std::cin >> sharks[i].SZ >> sharks[i].SPD >> sharks[i].INT;
+        std::cin >> sharks[i].size >> sharks[i].speed >> sharks[i].intel;
     }
-    INIT();
-    int ans = 0;
+    buildEdges();
+    int eaten = 0;
     for(int i = 1; i <= n; i++)
     {
-        std::memset(checked, 0, sizeof(checked));
-        if(dfs(i))
+        for(int attempt = 0; attempt < 2; attempt++)
         {
-            ans++;
-        }
-        std::memset(checked, 0, sizeof(checked));
-        if(dfs(i))
-        {
-            ans++;
+            std::fill(visited, visited + MAX, false);
+            if(dfs(i))
+            {
+                eaten++;
+            }
         }
     }
-    std::cout << n - ans << '\n';
+    std::cout << n - eaten << '\n';
     return 0;
 }

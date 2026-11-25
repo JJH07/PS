@@ -1,38 +1,43 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <vector>
-int max_v = 0;
-void make_table(std::string pattern)
+
+int prefixMax(std::string_view pattern, std::vector<int> &pi)
 {
-    int p_sz = (int)pattern.size();
-    std::vector<int> table(p_sz, 0);
-    int j = 0;
-    for(int i = 1; i < p_sz; i++)
+    const int size = pattern.size();
+    std::fill(pi.begin(), pi.begin() + size, 0);
+    int best = 0, j = 0;
+    for(int i = 1; i < size; i++)
     {
         while(j > 0 && pattern[i] != pattern[j])
         {
-            j = table[j - 1];
+            j = pi[j - 1];
         }
         if(pattern[i] == pattern[j])
         {
-            table[i] = ++j;
-            max_v = std::max(max_v, table[i]);
+            pi[i] = ++j;
+            best = std::max(best, pi[i]);
         }
     }
+    return best;
 }
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    std::string str;
-    std::cin >> str;
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    for(int i = 0; i < (int)str.size(); i++)
+    std::string text;
+    std::cin >> text;
+    const std::string_view view(text);
+    std::vector<int> pi(text.size());
+    int answer = 0;
+    for(std::size_t start = 0; start < text.size(); start++)
     {
-        make_table(str.substr(i, str.size()));
+        answer = std::max(answer, prefixMax(view.substr(start), pi));
     }
-    std::cout << max_v << '\n';
-    
+    std::cout << answer << '\n';
     return 0;
 }

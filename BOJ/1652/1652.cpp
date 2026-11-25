@@ -1,82 +1,40 @@
-//
-//  main.cpp
-//  1652
-//
-//  Created by 진준호 on 2019/12/30.
-//  Copyright © 2019 진준호. All rights reserved.
-//
+// Copyright © 2019 진준호. All rights reserved.
 
 #include <iostream>
-#include <vector>
 #include <string>
-int x(std::vector<std::string> &map, int len)
+#include <vector>
+
+int main()
 {
-    int cnt = 0;
-    for(int i = 0; i < len; i++)
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n;
+    std::cin >> n;
+    std::vector<std::string> room(n);
+    for(auto &line : room)
     {
-        int wid = 0;
-        for(int j = 0; j < len; j++)
+        std::cin >> line;
+    }
+
+    int horizontal = 0, vertical = 0;
+    for(int line = 0; line < n; line++)
+    {
+        int rowRun = 0, colRun = 0;
+        for(int pos = 0; pos < n; pos++)
         {
-            if(map[i][j] == '.')
+            rowRun = room[line][pos] == '.' ? rowRun + 1 : 0;
+            colRun = room[pos][line] == '.' ? colRun + 1 : 0;
+            if(rowRun == 2)
             {
-                wid++;
+                horizontal++;
             }
-            else
+            if(colRun == 2)
             {
-                wid >= 2 ? cnt++ : false;
-                wid = 0;
+                vertical++;
             }
-        }
-        if(wid >= 2)
-        {
-            cnt++;
         }
     }
-    return cnt;
-}
-int y(std::vector<std::string> &map, int len)
-{
-    int cnt = 0;
-    for(int i = 0; i < len; i++)
-    {
-        int wid = 0;
-        for(int j = 0; j < len; j++)
-        {
-            if(map[j][i] == '.')
-            {
-                wid++;
-            }
-            else
-            {
-                wid >= 2 ? cnt++ : false;
-                wid = 0;
-            }
-        }
-        if(wid >= 2)
-        {
-            cnt++;
-        }
-    }
-    return cnt;
-}
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    std::vector<std::string> map;
-    int len;
-    std::string s;
-    
-    std::cin >> len;
-    for(int i = 0; i < len; i++)
-    {
-        std::cin >> s;
-        map.push_back(s);
-    }
-    
-    std::cout << x(map, len) << ' ' << y(map, len) << '\n';
-    
+    std::cout << horizontal << ' ' << vertical << '\n';
     return 0;
 }

@@ -1,28 +1,28 @@
 #include <iostream>
-#include <vector>
 #include <queue>
 #include <cstring>
 
-#define MAX 100001
-struct road{
-    int x, y, c;
-    bool operator<(const road &rhs)const{
-        return c > rhs.c;
+constexpr int MAX = 100001;
+struct Edge
+{
+    int from, to, weight;
+    bool operator<(const Edge &rhs)const{
+        return weight > rhs.weight;
     }
 };
 int parent[MAX];
-int Find(int idx)
+int findRoot(int idx)
 {
     if(parent[idx] == -1)
     {
         return idx;
     }
-    return parent[idx] = Find(parent[idx]);
+    return parent[idx] = findRoot(parent[idx]);
 }
-bool Union(int a, int b)
+bool unite(int a, int b)
 {
-    a = Find(a);
-    b = Find(b);
+    a = findRoot(a);
+    b = findRoot(b);
     if(a == b)
     {
         return false;
@@ -32,34 +32,30 @@ bool Union(int a, int b)
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     std::memset(parent, -1, sizeof(parent));
-    
-    std::priority_queue<road> pq;
+
+    std::priority_queue<Edge> pq;
     int n, m;
     std::cin >> n >> m;
     for(int i = 0; i < m; i++)
     {
-        int a, b, c;
-        std::cin >> a >> b >> c;
-        pq.push({a, b, c});
+        int a, b, weight;
+        std::cin >> a >> b >> weight;
+        pq.push({a, b, weight});
     }
-    int ans = 0, cnt = 0;
-    while(!pq.empty())
+    int totalCost = 0, selected = 0;
+    while(!pq.empty() && selected < n - 2)
     {
-        if(cnt == n - 2)
-        {
-            break;
-        }
-        auto [x, y, c] = pq.top();
+        auto [from, to, weight] = pq.top();
         pq.pop();
-        if(Union(x, y))
+        if(unite(from, to))
         {
-            ans += c;
-            cnt++;
+            totalCost += weight;
+            selected++;
         }
     }
-    std::cout << ans << '\n';
+    std::cout << totalCost << '\n';
     return 0;
 }
