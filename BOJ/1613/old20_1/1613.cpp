@@ -1,87 +1,69 @@
-//
-//  main.cpp
-//  1613
-//
-//  Created by 진준호 on 2019/11/29.
-//  Copyright © 2019 진준호. All rights reserved.
-//
+// Copyright © 2019 진준호. All rights reserved.
 
+#include <algorithm>
 #include <iostream>
-#include <vector>
 #include <queue>
+#include <vector>
 
-int n, k, s, visited[401];
-std::vector<int> list[401];
+constexpr int MAX = 401;
+int visited[MAX];
+std::vector<int> adj[MAX];
 
-int historic(int a, int b)
+bool canReach(int from, int to)
 {
     std::queue<int> q;
-    int front;
-    
-    std::fill(visited, visited + 401, 0);
-    q.push(a);
-    visited[a] = 1;
+    q.push(from);
+    visited[from] = 1;
     while(!q.empty())
     {
-        front = q.front();
+        const int node = q.front();
         q.pop();
-        if(front == b)
+        if(node == to)
         {
-            return -1;
+            return true;
         }
-        int list_len = (int)list[front].size();
-        for(int i = 0; i < list_len; i++)
+        for(int next : adj[node])
         {
-            if(visited[list[front][i]] == 0)
+            if(!visited[next])
             {
-                q.push(list[front][i]);
-                visited[list[front][i]] = 1;
+                visited[next] = 1;
+                q.push(next);
             }
         }
     }
-    
-    visited[a] = 0;
-    q.push(b);
-    visited[b] = 1;
-    while(!q.empty())
-    {
-        front = q.front();
-        q.pop();
-        if(front == a)
-        {
-            return 1;
-        }
-        int list_len = (int)list[front].size();
-        for(int i = 0; i < list_len; i++)
-        {
-            if(visited[list[front][i]] == 0)
-            {
-                q.push(list[front][i]);
-                visited[list[front][i]] = 1;
-            }
-        }
-    }
-    
-    return 0;
+    return false;
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cin.tie(NULL);
-    std::cin.sync_with_stdio(false);
-    
-    int a, b;
-    
+
+int compareEvents(int a, int b)
+{
+    std::fill(visited, visited + MAX, 0);
+    if(canReach(a, b))
+    {
+        return -1;
+    }
+    visited[a] = 0;
+    return canReach(b, a) ? 1 : 0;
+}
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, k, queries;
     std::cin >> n >> k;
     for(int i = 0; i < k; i++)
     {
-        std::cin >> a >> b;
-        list[a].push_back(b);
+        int from, to;
+        std::cin >> from >> to;
+        adj[from].push_back(to);
     }
-    std::cin >> s;
-    for(int i = 0 ; i < s; i++)
+    std::cin >> queries;
+    for(int i = 0; i < queries; i++)
     {
+        int a, b;
         std::cin >> a >> b;
-        std::cout << historic(a, b) << '\n';
+        std::cout << compareEvents(a, b) << '\n';
     }
     return 0;
 }

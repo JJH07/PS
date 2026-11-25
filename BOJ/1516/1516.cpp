@@ -1,44 +1,45 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#define MAX 501
-int n, T[MAX], Constructed[MAX];
-std::vector<int> Pre[MAX];
-int Build(int idx)
+constexpr int MAX = 501;
+int n, buildTime[MAX], finishTime[MAX];
+std::vector<int> prerequisites[MAX];
+int finishAt(int node)
 {
-    if(Constructed[idx] > 0)
+    if(finishTime[node] > 0)
     {
-        return Constructed[idx];
+        return finishTime[node];
     }
-    int Time = 0;
-    for(auto p : Pre[idx])
+    int waitTime = 0;
+    for(auto p : prerequisites[node])
     {
-        Time = std::max(Time, Build(p));
+        waitTime = std::max(waitTime, finishAt(p));
     }
-    return Constructed[idx] = Time + T[idx];
+    return finishTime[node] = waitTime + buildTime[node];
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     std::cin >> n;
     for(int i = 1; i <= n; i++)
     {
-        std::cin >> T[i];
+        std::cin >> buildTime[i];
         while(1)
         {
-            int C;
-            std::cin >> C;
-            if(C == -1)
+            int prerequisite;
+            std::cin >> prerequisite;
+            if(prerequisite == -1)
             {
                 break;
             }
-            Pre[i].push_back(C);
+            prerequisites[i].push_back(prerequisite);
         }
     }
     for(int i = 1; i <= n; i++)
     {
-        std::cout << Build(i) << '\n';
+        std::cout << finishAt(i) << '\n';
     }
     return 0;
 }

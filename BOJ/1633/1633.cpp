@@ -1,11 +1,10 @@
 #include <iostream>
-#include <vector>
 #include <algorithm>
 
-int count, white[1001], black[1001], dp[16][16][1001];
-int solve(int w, int b, int idx)
+int playerCount, white[1001], black[1001], dp[16][16][1001];
+int maxScore(int w, int b, int idx)
 {
-    if(idx == count)
+    if(idx == playerCount)
     {
         return 0;
     }
@@ -13,35 +12,41 @@ int solve(int w, int b, int idx)
     {
         return 0;
     }
-    int &ret = dp[w][b][idx];
-    if(ret != -1)
+    int &result = dp[w][b][idx];
+    if(result != -1)
     {
-        return ret;
+        return result;
     }
-    ret = 0;
+    result = 0;
     if(w < 15)
     {
-        ret = white[idx] + solve(w + 1, b, idx + 1);
+        result = white[idx] + maxScore(w + 1, b, idx + 1);
     }
     if(b < 15)
     {
-        ret = std::max(ret, black[idx] + solve(w, b + 1, idx + 1));
+        result = std::max(result, black[idx] + maxScore(w, b + 1, idx + 1));
     }
-    ret = std::max(ret, solve(w, b, idx + 1));
-    return ret;
+    result = std::max(result, maxScore(w, b, idx + 1));
+    return result;
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(0);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    std::fill(dp[0][0], dp[0][0] + 16 * 16 * 1001, -1);
-
-
-    while(!(std::cin >> white[count] >> black[count]).eof())
+    for(auto &whiteCount : dp)
     {
-        count++;
+        for(auto &row : whiteCount)
+        {
+            std::fill(row, row + 1001, -1);
+        }
     }
-    std::cout << solve(0, 0, 0) << '\n';
+
+
+    while(!(std::cin >> white[playerCount] >> black[playerCount]).eof())
+    {
+        playerCount++;
+    }
+    std::cout << maxScore(0, 0, 0) << '\n';
     return 0;
 }

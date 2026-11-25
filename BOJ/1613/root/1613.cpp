@@ -1,54 +1,50 @@
+#include <algorithm>
+#include <iostream>
 
-#include <bits/stdc++.h>
-#define MAX 401
+constexpr int MAX_N = 400;
+constexpr int INF = MAX_N + 1;
+int dist[MAX_N + 1][MAX_N + 1];
 
-int map[MAX][MAX], n, k, s;
 int main()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
-    int pre, post;
-
-    for(int i = 0; i < MAX; i++)
+    for(int i = 0; i <= MAX_N; i++)
     {
-        for(int j = 0; j < MAX; j++)
+        for(int j = 0; j <= MAX_N; j++)
         {
-            if(i == j)
-            {
-                map[i][j] = 0;
-            }
-            else
-            {
-                map[i][j] = MAX;
-            }
+            dist[i][j] = i == j ? 0 : INF;
         }
     }
+    int n, k, queries;
     std::cin >> n >> k;
     for(int i = 0; i < k; i++)
     {
-        std::cin >> pre >> post;
-        map[pre][post] = 1;
+        int before, after;
+        std::cin >> before >> after;
+        dist[before][after] = 1;
     }
-    for(int k = 1; k <= n; k++)
+    for(int mid = 1; mid <= n; mid++)
     {
         for(int i = 1; i <= n; i++)
         {
             for(int j = 1; j <= n; j++)
             {
-                map[i][j] = std::min(map[i][j], map[i][k] + map[k][j]);
+                dist[i][j] = std::min(dist[i][j], dist[i][mid] + dist[mid][j]);
             }
         }
     }
-    std::cin >> s;
-    for(int i = 0; i < s; i++)
+    std::cin >> queries;
+    for(int i = 0; i < queries; i++)
     {
-        std::cin >> pre >> post;
-        if(map[pre][post] == MAX && map[post][pre] == MAX)
+        int before, after;
+        std::cin >> before >> after;
+        if(dist[before][after] == INF && dist[after][before] == INF)
         {
             std::cout << "0\n";
         }
-        else if(map[pre][post] == MAX)
+        else if(dist[before][after] == INF)
         {
             std::cout << "1\n";
         }

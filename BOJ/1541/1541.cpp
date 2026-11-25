@@ -1,52 +1,34 @@
 #include <iostream>
 #include <string>
-#include <vector>
-typedef std::pair<int, int> pii;
-std::vector<pii> list;
-void parse(std::string s)
+
+int parse(const std::string &expression)
 {
-    s += '+';
-    int offset = 1, number = 0;
-    for(auto c : s)
+    int number = 0, total = 0;
+    bool subtract = false;
+    for(std::size_t i = 0; i <= expression.size(); i++)
     {
-        if('0' <= c && c <= '9')
+        const char c = i < expression.size() ? expression[i] : '+';
+        if(c >= '0' && c <= '9')
         {
             number = number * 10 + c - '0';
         }
-        else if(list.empty())
-        {
-            list.push_back({offset, number});
-            offset = c == '+' ? 1 : -1;
-            number = 0;
-        }
         else
         {
-            auto e_it = list.end() - 1;
-            if(e_it->first < 0)
-            {
-                e_it->second += number;
-            }
-            else
-            {
-                list.push_back({offset, number});
-            }
-            offset = c == '+' ? 1 : -1;
+            total += subtract ? -number : number;
+            subtract = subtract || c == '-';
             number = 0;
         }
     }
+    return total;
 }
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    int ans = 0;
-    std::string s;
-    std::cin >> s;
-    parse(s);
-    for(auto x : list)
-    {
-        ans += x.first * x.second;
-    }
-    std::cout << ans << '\n';
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    std::string expression;
+    std::cin >> expression;
+    std::cout << parse(expression) << '\n';
     return 0;
 }

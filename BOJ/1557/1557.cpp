@@ -1,48 +1,55 @@
 #include <iostream>
-#define MAX 50000
-#define INF 2000000000
+constexpr int MAX = 50000;
+constexpr long long LIMIT = 2000000000;
 typedef long long ll;
-ll t[MAX];
-void init()
+ll mu[MAX];
+void buildMobius()
 {
-    t[1] = 1;
+    mu[1] = 1;
     for(int i = 1; i < MAX; i++)
     {
+        if(mu[i] == 0)
+        {
+            continue;
+        }
         for(int j = 2 * i; j < MAX; j += i)
         {
-            t[j] -= t[i];
+            mu[j] -= mu[i];
         }
     }
 }
-ll func(ll n)
+ll countSquareFree(ll n)
 {
-    ll ret = 0;
+    ll count = 0;
     for(ll i = 1; i * i <= n; i++)
     {
-        ret += t[i] * (n / (i * i));
+        if(mu[i] != 0)
+        {
+            count += mu[i] * (n / (i * i));
+        }
     }
-    return ret;
+    return count;
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    init();
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    buildMobius();
     ll k;
     std::cin >> k;
-    ll l = 1, r = INF;
-    while(l <= r)
+    ll left = 1, right = LIMIT;
+    while(left <= right)
     {
-        ll mid = (l + r) >> 1;
-        if(func(mid) < k)
+        ll mid = (left + right) >> 1;
+        if(countSquareFree(mid) < k)
         {
-            l = mid + 1;
+            left = mid + 1;
         }
         else
         {
-            r = mid - 1;
+            right = mid - 1;
         }
     }
-    std::cout << l << '\n';
+    std::cout << left << '\n';
     return 0;
 }
