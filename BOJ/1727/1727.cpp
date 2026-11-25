@@ -1,17 +1,12 @@
-//
-//  main.cpp
-//  1727
-//
-//  Created by 진준호 on 2020/02/19.
 //  Copyright © 2020 진준호. All rights reserved.
-//
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <cmath>
+#include <cstdlib>
 #include <cstring>
 
-int n, m, min_size, dp[1000][1000];
+int n, m, dp[1000][1000];
 std::vector<int> a, b;
 
 int solve(int ai, int bi)
@@ -20,25 +15,29 @@ int solve(int ai, int bi)
     {
         return 0;
     }
-    int &ret = dp[ai][bi];
-    if(ret != -1)
+    int &cost = dp[ai][bi];
+    if(cost != -1)
     {
-        return ret;
+        return cost;
     }
-    ret = 21470000;
-    for(int i = 0; i <= (m - n) - (bi - ai); i++)
+    cost = 21470000;
+    const int diff = std::abs(a[ai] - b[bi]);
+    const int skips = (m - n) - (bi - ai);
+    for(int i = 0; i <= skips; i++)
     {
-        ret = std::min(ret, abs(a[ai] - b[bi]) + solve(ai + 1, bi + 1 + i));
+        cost = std::min(cost, diff + solve(ai + 1, bi + 1 + i));
     }
-    return ret;
+    return cost;
 }
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
+int main()
+{
+
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
     std::cin >> n >> m;
+    a.reserve(n);
+    b.reserve(m);
     for(int i = 0; i < n; i++)
     {
         int tmp;
@@ -53,19 +52,19 @@ int main(int argc, const char * argv[]) {
     }
     std::sort(a.begin(), a.end());
     std::sort(b.begin(), b.end());
-    
+
     std::memset(dp, -1, sizeof(dp));
-    
+
     if(n > m)
     {
         std::swap(a, b);
         std::swap(n, m);
     }
-    int ans = 21470000;
+    int answer = 21470000;
     for(int i = 0; i <= m - n; i++)
     {
-        ans = std::min(ans, solve(0, i));
+        answer = std::min(answer, solve(0, i));
     }
-    std::cout << ans << '\n';
+    std::cout << answer << '\n';
     return 0;
 }

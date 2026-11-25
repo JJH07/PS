@@ -1,19 +1,21 @@
+#include <algorithm>
 #include <iostream>
+#include <utility>
 #include <vector>
-#define MAX 100000
+constexpr int MAX = 100000;
 
-int n, list[MAX], tree[MAX * 4];
-int init(int node, int start, int end)
+int n, heights[MAX], tree[MAX * 4];
+int buildTree(int node, int start, int end)
 {
     if(start == end)
     {
         return tree[node] = start;
     }
-    int left = init(node * 2, start, (start + end) / 2);
-    int right = init(node * 2 + 1, (start + end) / 2 + 1, end);
-    return tree[node] = list[left] > list[right] ? right : left;
+    int left = buildTree(node * 2, start, (start + end) / 2);
+    int right = buildTree(node * 2 + 1, (start + end) / 2 + 1, end);
+    return tree[node] = heights[left] > heights[right] ? right : left;
 }
-int query(int node, int start, int end, int left, int right)
+int minIndex(int node, int start, int end, int left, int right)
 {
     if(end < left || right < start)
     {
@@ -23,42 +25,49 @@ int query(int node, int start, int end, int left, int right)
     {
         return tree[node];
     }
-    int l_idx = query(node * 2, start, (start + end) / 2, left, right);
-    int r_idx = query(node * 2 + 1, (start + end) / 2 + 1, end, left, right);
-    if(l_idx == -1)
+    int leftIndex = minIndex(node * 2, start, (start + end) / 2, left, right);
+    int rightIndex = minIndex(node * 2 + 1, (start + end) / 2 + 1, end, left, right);
+    if(leftIndex == -1)
     {
-        return r_idx;
+        return rightIndex;
     }
-    if(r_idx == -1)
+    if(rightIndex == -1)
     {
-        return l_idx;
+        return leftIndex;
     }
-    return list[l_idx] > list[r_idx] ? r_idx : l_idx;
+    return heights[leftIndex] > heights[rightIndex] ? rightIndex : leftIndex;
 }
-int solve(int start, int end, int left, int right)
+int maxArea()
 {
-    int k = query(1, start, end, left, right);
-    int ans = list[k] * (right - left + 1);
-    if(left < k)
+    int best = 0;
+    std::vector<std::pair<int, int>> ranges{{0, n - 1}};
+    while(!ranges.empty())
     {
-        ans = std::max(ans, solve(start, end, left, k - 1));
+        auto [left, right] = ranges.back();
+        ranges.pop_back();
+        int index = minIndex(1, 0, n - 1, left, right);
+        best = std::max(best, heights[index] * (right - left + 1));
+        if(index < right)
+        {
+            ranges.push_back({index + 1, right});
+        }
+        if(left < index)
+        {
+            ranges.push_back({left, index - 1});
+        }
     }
-    if(right > k)
-    {
-        ans = std::max(ans, solve(start, end, k + 1, right));
-    }
-    return ans;
+    return best;
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
     std::cin >> n;
     for(int i = 0; i < n; i++)
     {
-        std::cin >> list[i];
+        std::cin >> heights[i];
     }
-    init(1, 0, n - 1);
-    std::cout << solve(0, n - 1, 0, n - 1) << '\n';
+    buildTree(1, 0, n - 1);
+    std::cout << maxArea() << '\n';
 }

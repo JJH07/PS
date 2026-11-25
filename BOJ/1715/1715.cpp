@@ -1,11 +1,11 @@
 #include <iostream>
 #include <queue>
 #include <vector>
-#include <algorithm>
+#include <functional>
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     int n;
     std::priority_queue<int, std::vector<int>, std::greater<int>> pq;
@@ -16,16 +16,16 @@ int main()
         std::cin >> card;
         pq.push(card);
     }
-    int ans = 0;
+    int total = 0;
     while(pq.size() > 1)
     {
-        int top = pq.top();
+        int merged = pq.top();
         pq.pop();
-        top += pq.top();
+        merged += pq.top();
         pq.pop();
-        pq.push(top);
-        ans += top;
+        pq.push(merged);
+        total += merged;
     }
-    std::cout << ans << '\n';
+    std::cout << total << '\n';
     return 0;
 }

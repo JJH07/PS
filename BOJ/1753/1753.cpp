@@ -1,71 +1,61 @@
-//
-//  main.cpp
-//  1753
-//
-//  Created by 진준호 on 2020/04/27.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
+#include <functional>
 #include <iostream>
-#include <algorithm>
-#include <vector>
-#include <cstring>
+#include <limits>
 #include <queue>
+#include <utility>
+#include <vector>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int v, e, start, dist[20001], visited[20001];
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
-    
-    std::memset(dist, 0, sizeof(dist));
-    std::memset(visited, 0, sizeof(visited));
-    
-    std::cin >> v >> e >> start;
-    
-    std::vector<std::pair<int, int>> edge[v + 1];
-    
-    for(int i = 0; i < e; i++)
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, m, start;
+    std::cin >> n >> m >> start;
+    std::vector<std::vector<std::pair<int, int>>> adj(n + 1);
+    for(int i = 0; i < m; i++)
     {
-        int a, b, c;
-        std::cin >> a >> b >> c;
-        edge[a].push_back({b, c});
+        int from, to, weight;
+        std::cin >> from >> to >> weight;
+        adj[from].push_back({to, weight});
     }
-    
+
+    constexpr int INF = std::numeric_limits<int>::max();
+    std::vector<int> dist(n + 1, INF);
+    using Entry = std::pair<int, int>;
+    std::priority_queue<Entry, std::vector<Entry>, std::greater<Entry>> pq;
+    dist[start] = 0;
     pq.push({0, start});
     while(!pq.empty())
     {
-        std::pair<int, int> cand = pq.top();
+        auto [cost, node] = pq.top();
         pq.pop();
-        if(visited[cand.second])
+        if(cost != dist[node])
         {
             continue;
         }
-        visited[cand.second] = 1;
-        dist[cand.second] = cand.first;
-        for(std::pair<int, int> next : edge[cand.second])
+        for(auto [next, weight] : adj[node])
         {
-            if(visited[next.first])
+            const int nextCost = cost + weight;
+            if(nextCost < dist[next])
             {
-                continue;
+                dist[next] = nextCost;
+                pq.push({nextCost, next});
             }
-            pq.push({cand.first + next.second, next.first});
         }
     }
-    for(int i = 1; i <= v; i++)
+    for(int node = 1; node <= n; node++)
     {
-        if(visited[i])
-        {
-            std::cout << dist[i] << '\n';
-        }
-        else
+        if(dist[node] == INF)
         {
             std::cout << "INF\n";
         }
+        else
+        {
+            std::cout << dist[node] << '\n';
+        }
     }
-    
     return 0;
 }

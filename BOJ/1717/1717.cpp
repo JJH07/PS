@@ -1,22 +1,22 @@
 #include <iostream>
-#include <cstring>
+#include <algorithm>
 
 int parent[1000001];
-int Find(int idx)
+int findRoot(int idx)
 {
     if(parent[idx] < 0)
     {
         return idx;
     }
-    return parent[idx] = Find(parent[idx]);
+    return parent[idx] = findRoot(parent[idx]);
 }
-void Union(int a, int b)
+void unite(int a, int b)
 {
-    a = Find(a);
-    b = Find(b);
+    a = findRoot(a);
+    b = findRoot(b);
     if(a == b)
     {
-        return ;
+        return;
     }
     if(parent[a] > parent[b])
     {
@@ -27,29 +27,29 @@ void Union(int a, int b)
     {
         parent[a] += parent[b];
         parent[b] = a;
-    } 
+    }
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    std::memset(parent, -1, sizeof(parent));
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     int n, m;
     std::cin >> n >> m;
+    std::fill(parent, parent + n + 1, -1);
     while(m--)
     {
         int op, a, b;
         std::cin >> op >> a >> b;
         if(op)
         {
-            std::cout << (Find(a) == Find(b) ? "YES\n" : "NO\n");
+            std::cout << (findRoot(a) == findRoot(b) ? "YES\n" : "NO\n");
         }
         else
         {
-            Union(a, b);
+            unite(a, b);
         }
-        
+
     }
 
     return 0;

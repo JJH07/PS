@@ -1,55 +1,55 @@
 #include <iostream>
 #include <queue>
-#include <vector>
 #include <algorithm>
-#define MAX 101
+constexpr int MAX = 101;
 typedef std::pair<int, int> pii;
-int n, m, k, map[MAX][MAX];
+int n, m, k, grid[MAX][MAX];
 bool visited[MAX][MAX];
-int dx[4] = {1, 0, -1, 0}, dy[4] = {0, 1, 0, -1};
+int dr[4] = {1, 0, -1, 0}, dc[4] = {0, 1, 0, -1};
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     std::queue<pii> q;
-    std::vector<int> list;
+    int best = 0;
     std::cin >> n >> m >> k;
     while(k--)
     {
         int r, c;
         std::cin >> r >> c;
-        map[r][c]++;
+        grid[r][c]++;
     }
     for(int i = 1; i <= n; i++)
     {
         for(int j = 1; j <= m; j++)
         {
-            if(visited[i][j] || !map[i][j])
+            if(visited[i][j] || !grid[i][j])
             {
                 continue;
             }
             q.push({i, j});
             visited[i][j] = true;
-            list.push_back(1);
+            int size = 1;
             while(!q.empty())
             {
-                auto [x, y] = q.front();
+                auto [row, col] = q.front();
                 q.pop();
                 for(int di = 0; di < 4; di++)
                 {
-                    int nx = dx[di] + x;
-                    int ny = dy[di] + y;
-                    if(nx <= 0 || ny <= 0 || nx > n || ny > m || map[nx][ny] == 0 || visited[nx][ny])
+                    int nextRow = dr[di] + row;
+                    int nextCol = dc[di] + col;
+                    if(nextRow <= 0 || nextCol <= 0 || nextRow > n || nextCol > m || grid[nextRow][nextCol] == 0 || visited[nextRow][nextCol])
                     {
                         continue;
                     }
-                    q.push({nx, ny});
-                    visited[nx][ny] = true;
-                    list.back()++;
+                    q.push({nextRow, nextCol});
+                    visited[nextRow][nextCol] = true;
+                    size++;
                 }
             }
+            best = std::max(best, size);
         }
     }
-    std::cout << *std::max_element(list.begin(), list.end()) << '\n';
+    std::cout << best << '\n';
     return 0;
 }

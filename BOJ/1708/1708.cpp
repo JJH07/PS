@@ -1,19 +1,17 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <stack>
-#include <cmath>
 typedef long long ll;
 
 struct Point{
     int x, y;
-    int p, q;
-    Point(int a, int b) : x(a), y(b), p(1), q(0){}
+    int dx, dy;
+    Point(int a, int b) : x(a), y(b), dx(1), dy(0){}
 
     bool operator<(const Point &rhs) const{
-        if(1LL * q * rhs.p != 1LL * p * rhs.q)
+        if(1LL * dy * rhs.dx != 1LL * dx * rhs.dy)
         {
-            return 1LL * q * rhs.p < 1LL * p * rhs.q;
+            return 1LL * dy * rhs.dx < 1LL * dx * rhs.dy;
         }
         if(y != rhs.y)
         {
@@ -22,52 +20,51 @@ struct Point{
         return x < rhs.x;
     }
 };
-ll ccw(const Point &A, const Point &B, const Point &C)
+ll ccw(const Point &a, const Point &b, const Point &c)
 {
-    return 1LL * (A.x * B.y + B.x * C.y + C.x * A.y - A.y * B.x - B.y * C.x - C.y * A.x);
+    return 1LL * (a.x * b.y + b.x * c.y + c.x * a.y - a.y * b.x - b.y * c.x - c.y * a.x);
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     int n;
-    std::vector<Point> P;
+    std::vector<Point> points;
     std::cin >> n;
+    points.reserve(n);
     for(int i = 0; i < n; i++)
     {
         int a, b;
         std::cin >> a >> b;
-        P.push_back(Point(a, b));
+        points.emplace_back(a, b);
     }
-    std::sort(P.begin(), P.end());
+    std::sort(points.begin(), points.end());
     for(int i = 1; i < n; i++)
     {
-        P[i].p = P[i].x - P[0].x;
-        P[i].q = P[i].y - P[0].y;
+        points[i].dx = points[i].x - points[0].x;
+        points[i].dy = points[i].y - points[0].y;
     }
-    std::sort(P.begin() + 1, P.end());
+    std::sort(points.begin() + 1, points.end());
 
-    std::stack<int> stk;
-    stk.push(0);
-    stk.push(1);
-    int idx = 2;
-    while(idx < n)
+    std::vector<int> hull;
+    hull.reserve(n);
+    hull.push_back(0);
+    hull.push_back(1);
+    for(int idx = 2; idx < n; idx++)
     {
-        while(stk.size() >= 2)
+        while(hull.size() >= 2)
         {
-            int first, second;
-            second = stk.top();
-            stk.pop();
-            first = stk.top();
-            if(ccw(P[first], P[second], P[idx]) > 0)
+            int first = hull[hull.size() - 2];
+            int second = hull.back();
+            if(ccw(points[first], points[second], points[idx]) > 0)
             {
-                stk.push(second);
                 break;
             }
+            hull.pop_back();
         }
-        stk.push(idx++);
+        hull.push_back(idx);
     }
-    std::cout << stk.size() << '\n';
+    std::cout << hull.size() << '\n';
     return 0;
 }

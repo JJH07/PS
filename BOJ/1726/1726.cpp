@@ -1,93 +1,70 @@
-//
-//  main.cpp
-//  1726
-//
-//  Created by 진준호 on 2019/11/29.
 //  Copyright © 2019 진준호. All rights reserved.
-//
 
 #include <iostream>
 #include <queue>
 
-int n, m, map[101][101], visited[101][101][5];
-int dx[5][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {1, 2, 3}, {-1, -2, -3}}, dy[5][3] = {{0, 0, 0}, {1, 2, 3}, {-1, -2, -3}, {0, 0, 0}, {0, 0, 0}};
-struct node{
-    int x;
-    int y;
+int n, m, grid[101][101], visited[101][101][5];
+int dr[5] = {0, 0, 0, 1, -1}, dc[5] = {0, 1, -1, 0, 0};
+struct State{
+    int row;
+    int col;
     int dir;
     int dist;
 };
-node front, end;
-std::queue<node> q;
+State current, target;
+std::queue<State> q;
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
     std::cin >> n >> m;
     for(int i = 1; i <= n; i++)
     {
         for(int j = 1; j <= m; j++)
         {
-            std::cin >> map[i][j];
+            std::cin >> grid[i][j];
         }
     }
-    std::cin >> front.x >> front.y >> front.dir;
-    std::cin >> end.x >> end.y >> end.dir;
-    
-    front.dist = 0;
-    q.push(front);
-    visited[front.x][front.y][front.dir] = 1;
-    
+    std::cin >> current.row >> current.col >> current.dir;
+    std::cin >> target.row >> target.col >> target.dir;
+
+    current.dist = 0;
+    q.push(current);
+    visited[current.row][current.col][current.dir] = 1;
+
     while(!q.empty())
     {
-        front = q.front();
+        current = q.front();
         q.pop();
-        if(front.x == end.x && front.y == end.y && front.dir == end.dir)
+        if(current.row == target.row && current.col == target.col && current.dir == target.dir)
         {
-            std::cout << front.dist << '\n';
+            std::cout << current.dist << '\n';
             break;
         }
-        for(int i = 0; i < 3; i++)
+        for(int step = 1; step <= 3; step++)
         {
-            int nx = front.x + dx[front.dir][i];
-            int ny = front.y + dy[front.dir][i];
-            if(map[nx][ny] == 1)
+            int nextRow = current.row + dr[current.dir] * step;
+            int nextCol = current.col + dc[current.dir] * step;
+            if(grid[nextRow][nextCol] == 1)
             {
                 break;
             }
-            if(nx <= 0 || ny <= 0 || nx > n || ny > m || visited[nx][ny][front.dir] == 1)
+            if(nextRow <= 0 || nextCol <= 0 || nextRow > n || nextCol > m || visited[nextRow][nextCol][current.dir] == 1)
             {
                 continue;
             }
-            visited[nx][ny][front.dir] = 1;
-            q.push({nx, ny, front.dir, front.dist + 1});
+            visited[nextRow][nextCol][current.dir] = 1;
+            q.push({nextRow, nextCol, current.dir, current.dist + 1});
         }
-        if(front.dir <= 2)
+        const int firstDir = current.dir <= 2 ? 3 : 1;
+        for(int dir = firstDir; dir <= firstDir + 1; dir++)
         {
-            if(visited[front.x][front.y][3] == 0)
+            if(visited[current.row][current.col][dir] == 0)
             {
-                visited[front.x][front.y][3] = 1;
-                q.push({front.x, front.y, 3, front.dist + 1});
-            }
-            if(visited[front.x][front.y][4] == 0)
-            {
-                visited[front.x][front.y][4] = 1;
-                q.push({front.x, front.y, 4, front.dist + 1});
-            }
-        }
-        else
-        {
-            if(visited[front.x][front.y][1] == 0)
-            {
-                visited[front.x][front.y][1] = 1;
-                q.push({front.x, front.y, 1, front.dist + 1});
-            }
-            if(visited[front.x][front.y][2] == 0)
-            {
-                visited[front.x][front.y][2] = 1;
-                q.push({front.x, front.y, 2, front.dist + 1});
+                visited[current.row][current.col][dir] = 1;
+                q.push({current.row, current.col, dir, current.dist + 1});
             }
         }
     }

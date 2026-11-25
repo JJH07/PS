@@ -1,33 +1,27 @@
-//
-//  main.cpp
-//  1748
-//
-//  Created by 진준호 on 2020/01/28.
 //  Copyright © 2020 진준호. All rights reserved.
-//
 
 #include <iostream>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int number, idx = 10, ans = 0, cnt = 1;
-    
-    std::cin >> number;
-    
-    while(idx <= number)
+int main()
+{
+
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, limit = 10, total = 0, digits = 1;
+
+    std::cin >> n;
+
+    while(limit <= n)
     {
-        ans += cnt * (idx - (idx / 10));
-        
-        idx *= 10;
-        cnt++;
+        total += digits * (limit - (limit / 10));
+
+        limit *= 10;
+        digits++;
     }
-    ans += cnt * (number - (idx / 10) + 1);
-    
-    std::cout << ans << '\n';
-    
+    total += digits * (n - (limit / 10) + 1);
+
+    std::cout << total << '\n';
+
     return 0;
 }

@@ -1,21 +1,15 @@
-//
-//  main.cpp
-//  1722
-//
-//  Created by 진준호 on 2020/01/07.
 //  Copyright © 2020 진준호. All rights reserved.
-//
 
 #include <iostream>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    long long n, k = 1, factorial[21], p, used[21];
-    
+int main()
+{
+
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    long long n, type = 1, factorial[21], rank, used[21];
+
     factorial[0] = 1;
     for(int i = 1; i <= 20; i++)
     {
@@ -25,46 +19,49 @@ int main(int argc, const char * argv[]) {
     {
         used[i] = 0;
     }
-    
-    std::cin >> n >> k;
-    if(k == 1)
+
+    std::cin >> n >> type;
+    if(type == 1)
     {
-        std::cin >> p;
+        std::cin >> rank;
         for(int i = 1; i <= n; i++)
         {
+            const long long block = factorial[n - i];
             for(int j = 1; j <= n; j++)
             {
                 if(used[j] == 1)
                 {
                     continue;
                 }
-                if(p <= factorial[n - i])
+                if(rank <= block)
                 {
                     std::cout << j << ' ';
                     used[j] = 1;
                     break;
                 }
-                p -= factorial[n - i];
+                rank -= block;
             }
         }
     }
     else
     {
-        long long cnt = 1;
+        rank = 1;
         for(int i = 1; i <= n; i++)
         {
-            std::cin >> p;
-            for(int j = 1; j < p; j++)
+            const long long block = factorial[n - i];
+            int value;
+            std::cin >> value;
+            for(int j = 1; j < value; j++)
             {
                 if(used[j] == 1)
                 {
                     continue;
                 }
-                cnt += factorial[n - i];
+                rank += block;
             }
-            used[p] = 1;
+            used[value] = 1;
         }
-        std::cout << cnt;
+        std::cout << rank;
     }
     std::cout << '\n';
     return 0;
