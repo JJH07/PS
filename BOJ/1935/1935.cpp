@@ -1,47 +1,47 @@
 #include <iostream>
 #include <string>
 #include <stack>
-double table[26];
+double values[26];
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     std::cout << std::fixed;
     std::cout.precision(2);
     int n;
-    std::string op;
+    std::string expr;
     std::stack<double> stk;
-    std::cin >> n >> op;
+    std::cin >> n >> expr;
     for(int i = 0; i < n; i++)
     {
-        std::cin >> table[i];
+        std::cin >> values[i];
     }
-    for(char c : op)
+    for(char token : expr)
     {
-        if(c >= 'A' && c <= 'Z')
+        if(token >= 'A' && token <= 'Z')
         {
-            stk.push(table[c - 'A']);
+            stk.push(values[token - 'A']);
             continue;
         }
-        double y = stk.top();
+        double right = stk.top();
         stk.pop();
-        double x = stk.top();
+        double left = stk.top();
         stk.pop();
-        if(c == '+')
+        if(token == '+')
         {
-            stk.push(x + y);
+            stk.push(left + right);
         }
-        else if(c == '-')
+        else if(token == '-')
         {
-            stk.push(x - y);
+            stk.push(left - right);
         }
-        else if(c == '*')
+        else if(token == '*')
         {
-            stk.push(x * y);
+            stk.push(left * right);
         }
         else
         {
-            stk.push(x / y);
+            stk.push(left / right);
         }
     }
     std::cout << stk.top() << '\n';

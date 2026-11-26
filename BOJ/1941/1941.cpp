@@ -1,76 +1,71 @@
+#include <algorithm>
+#include <array>
+#include <cstring>
 #include <iostream>
 #include <string>
-#include <vector>
-#include <queue>
-#include <algorithm>
-typedef std::pair<int, int> pii;
-std::vector<int> pos;
-std::string map[5];
-bool visited[5][5];
-int dx[4] = {0, 1, 0, -1}, dy[4] = {1, 0, -1, 0};
+
+bool isConnected(const std::array<int, 7> &cells)
+{
+    bool selected[5][5];
+    std::memset(selected, 0, sizeof(selected));
+    for(int cell : cells)
+    {
+        selected[cell / 5][cell % 5] = true;
+    }
+    std::array<int, 7> queue;
+    int head = 0, tail = 0;
+    queue[tail++] = cells[0];
+    selected[cells[0] / 5][cells[0] % 5] = false;
+    constexpr int dr[4] = {0, 1, 0, -1};
+    constexpr int dc[4] = {1, 0, -1, 0};
+    while(head < tail)
+    {
+        int cell = queue[head++];
+        for(int dir = 0; dir < 4; dir++)
+        {
+            int row = cell / 5 + dr[dir], col = cell % 5 + dc[dir];
+            if(row < 0 || col < 0 || row >= 5 || col >= 5 || !selected[row][col])
+            {
+                continue;
+            }
+            selected[row][col] = false;
+            queue[tail++] = row * 5 + col;
+        }
+    }
+    return tail == 7;
+}
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    int ans = 0;
-    for(int i = 0; i < 18; i++)
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    std::array<int, 25> chosen{};
+    std::fill(chosen.end() - 7, chosen.end(), 1);
+    std::string grid[5];
+    for(auto &row : grid)
     {
-        pos.push_back(0);
+        std::cin >> row;
     }
-    for(int i = 0; i < 7; i++)
-    {
-        pos.push_back(1);
-    }
-    for(int i = 0; i < 5; i++)
-    {
-        std::cin >> map[i];
-    }
+    int answer = 0;
     do
     {
-        int S = 0, Y = 0, cnt = 0;
-        pii front;
-        std::queue<pii> q;
-        std::memset(visited, 0, sizeof(visited));
+        std::array<int, 7> cells;
+        int count = 0, sCount = 0;
         for(int i = 0; i < 25; i++)
         {
-            if(pos[i])
+            if(chosen[i])
             {
-                front.first = i / 5;
-                front.second = i % 5;
-                visited[front.first][front.second] = true;
-                map[front.first][front.second] == 'S' ? S++ : Y++;
+                cells[count++] = i;
+                sCount += grid[i / 5][i % 5] == 'S';
             }
         }
-        if(S < 4)
+        if(sCount >= 4 && isConnected(cells))
         {
-            continue;
-        }
-        cnt++;
-        q.push(front);
-        visited[front.first][front.second] = false;
-        while(!q.empty())
-        {
-            front = q.front();
-            q.pop();
-            for(int i = 0; i < 4; i++)
-            {
-                int nx = dx[i] + front.first;
-                int ny = dy[i] + front.second;
-                if(nx < 0 || ny < 0 || nx >= 5 || ny >= 5 || !visited[nx][ny])
-                {
-                    continue;
-                }
-                cnt++;
-                q.push({nx, ny});
-                visited[nx][ny] = false;
-            }
-        }
-        if(cnt == 7)
-        {
-            ans++;
+            answer++;
         }
     }
-    while(std::next_permutation(pos.begin(), pos.end()));
-    std::cout << ans << '\n';
+    while(std::next_permutation(chosen.begin(), chosen.end()));
+    std::cout << answer << '\n';
     return 0;
 }

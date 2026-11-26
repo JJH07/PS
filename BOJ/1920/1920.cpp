@@ -1,44 +1,27 @@
-#include <bits/stdc++.h>
-typedef long long ll;
-
-int n, m;
-std::vector<ll> list;
+#include <algorithm>
+#include <iostream>
+#include <vector>
 
 int main()
 {
-
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
+    std::cin.tie(nullptr);
+
+    int n, m;
     std::cin >> n;
-    for(int i = 0; i < n; i++)
+    std::vector<long long> values(n);
+    for(auto &value : values)
     {
-        ll num;
-        std::cin >> num;
-        list.push_back(num);
+        std::cin >> value;
     }
-    std::sort(list.begin(), list.end());
+    std::sort(values.begin(), values.end());
 
     std::cin >> m;
     while(m--)
     {
-        ll key;
-        int s = 0, e = n - 1;
-
+        long long key;
         std::cin >> key;
-        while(s <= e)
-        {
-            int mid = (s + e) >> 1;
-            if(list[mid] <= key)
-            {
-                s = mid + 1;
-            }
-            else
-            {
-                e = mid - 1;
-            }
-        }
-        std::cout << (list[e] == key) << '\n';
+        std::cout << std::binary_search(values.begin(), values.end(), key) << '\n';
     }
     return 0;
 }

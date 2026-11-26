@@ -1,22 +1,22 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <functional>
 #include <queue>
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     int n;
     std::priority_queue<int, std::vector<int>, std::greater<int>> pq;
     std::cin >> n;
     while(n--)
     {
-        int number;
-        std::cin >> number;
-        if(number > 0)
+        int value;
+        std::cin >> value;
+        if(value > 0)
         {
-            pq.push(number);
+            pq.push(value);
             continue;
         }
         if(pq.empty())

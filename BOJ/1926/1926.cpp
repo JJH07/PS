@@ -1,18 +1,18 @@
 #include <iostream>
 #include <queue>
-#include <vector>
 #include <algorithm>
-#define MAX 501
+constexpr int MAX = 501;
 typedef std::pair<int, int> PII;
 int n, m, paper[MAX][MAX];
 bool visited[MAX][MAX];
-std::vector<int> list;
-int dx[4] = {0, 1, 0, -1}, dy[4] = {1, 0, -1, 0};
+
+int dr[4] = {0, 1, 0, -1}, dc[4] = {1, 0, -1, 0};
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     std::queue<PII> q;
+    int count = 0, maxArea = 0;
 
     std::cin >> n >> m;
     for(int i = 0; i < n; i++)
@@ -32,26 +32,28 @@ int main()
             }
             q.push({i, j});
             visited[i][j] = true;
-            list.push_back(1);
+            count++;
+            int area = 1;
             while(!q.empty())
             {
-                auto [x, y] = q.front();
+                auto [row, col] = q.front();
                 q.pop();
                 for(int di = 0; di < 4; di++)
                 {
-                    int nx = dx[di] + x;
-                    int ny = dy[di] + y;
-                    if(nx < 0 || ny < 0 || nx >= n || ny >= m || !paper[nx][ny] || visited[nx][ny])
+                    int nextRow = dr[di] + row;
+                    int nextCol = dc[di] + col;
+                    if(nextRow < 0 || nextCol < 0 || nextRow >= n || nextCol >= m || !paper[nextRow][nextCol] || visited[nextRow][nextCol])
                     {
                         continue;
                     }
-                    q.push({nx, ny});
-                    visited[nx][ny] = true;
-                    list.back()++;
+                    q.push({nextRow, nextCol});
+                    visited[nextRow][nextCol] = true;
+                    area++;
                 }
             }
+            maxArea = std::max(maxArea, area);
         }
     }
-    std::cout << list.size() << '\n' << (list.size() == 0 ? 0 : *std::max_element(list.begin(), list.end())) << '\n';
+    std::cout << count << '\n' << maxArea << '\n';
     return 0;
 }

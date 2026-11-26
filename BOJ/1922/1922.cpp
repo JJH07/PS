@@ -1,16 +1,17 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <algorithm>
-#define MAX 1001
-typedef std::pair<int, int> PII;
+#include <functional>
+#include <utility>
+constexpr int MAX = 1001;
+typedef std::pair<int, int> Entry;
 int n, m;
-std::vector<PII> link[MAX];
+std::vector<Entry> adj[MAX];
 bool visited[MAX];
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     std::cin >> n >> m;
     for(int i = 0; i < m; i++)
@@ -21,34 +22,36 @@ int main()
         {
             continue;
         }
-        link[a].push_back({b, c});
-        link[b].push_back({a, c});
+        adj[a].push_back({b, c});
+        adj[b].push_back({a, c});
     }
-    int ans = 0;
-    std::priority_queue<PII> pq;
-    for(auto [y, c] : link[1])
+    int total = 0;
+    std::priority_queue<Entry, std::vector<Entry>, std::greater<Entry>> pq;
+    for(auto [y, c] : adj[1])
     {
-        pq.push({-c, y});
+        pq.push({c, y});
     }
-    visited[1] = 1;
-    while(!pq.empty())
+    visited[1] = true;
+    int selected = 1;
+    while(!pq.empty() && selected < n)
     {
-        auto [c, now] = pq.top();
+        auto [c, node] = pq.top();
         pq.pop();
-        if(visited[now])
+        if(visited[node])
         {
             continue;
         }
-        ans += -c;
-        visited[now] = 1;
-        for(auto next : link[now])
+        total += c;
+        visited[node] = true;
+        selected++;
+        for(auto next : adj[node])
         {
             if(!visited[next.first])
             {
-                pq.push({-next.second, next.first});
+                pq.push({next.second, next.first});
             }
         }
     }
-    std::cout << ans << '\n';
+    std::cout << total << '\n';
     return 0;
 }

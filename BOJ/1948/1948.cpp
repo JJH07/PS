@@ -1,65 +1,79 @@
+#include <algorithm>
 #include <iostream>
-#include <vector>
 #include <queue>
-#define MAX 10001
-typedef std::pair<int, int> pii;
-int n, m, indegree[MAX], distance[MAX];
-bool visited[MAX];
-std::vector<pii> link[MAX], link2[MAX];
+#include <utility>
+#include <vector>
 
-int main()
+constexpr int MAX = 10001;
+using Edge = std::pair<int, int>;
+int indegree[MAX], dist[MAX];
+std::vector<Edge> adj[MAX], reverseAdj[MAX];
+
+void longestPaths(int start)
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-
-    std::cin >> n >> m;
-    while(m--)
-    {
-        int a, b, c;
-        std::cin >> a >> b >> c;
-        link[a].push_back({b, c});
-        link2[b].push_back({a, c});
-        indegree[b]++;
-    }
     std::queue<int> q;
-    int s, e, cnt = 0;
-    std::cin >> s >> e;
-    q.push(s);
+    q.push(start);
     while(!q.empty())
     {
-        int now = q.front();
+        int node = q.front();
         q.pop();
-        for(auto [next, v] : link[now])
+        for(auto [next, weight] : adj[node])
         {
-            int ndist = distance[now] + v;
-            if(ndist > distance[next])
-            {
-                distance[next] = ndist;
-            }
+            dist[next] = std::max(dist[next], dist[node] + weight);
             if(--indegree[next] == 0)
             {
                 q.push(next);
             }
         }
     }
-    q.push(e);
+}
+
+int countCritical(int target)
+{
+    bool visited[MAX]{};
+    std::queue<int> q;
+    q.push(target);
+    visited[target] = true;
+    int edgeCount = 0;
     while(!q.empty())
     {
-        int now = q.front();
+        int node = q.front();
         q.pop();
-        for(auto [next, v] : link2[now])
+        for(auto [prev, weight] : reverseAdj[node])
         {
-            if(distance[next] + v != distance[now])
+            if(dist[prev] + weight != dist[node])
             {
                 continue;
             }
-            if(!visited[next])
+            edgeCount++;
+            if(!visited[prev])
             {
-                visited[next] = true;
-                q.push(next);
+                visited[prev] = true;
+                q.push(prev);
             }
-            cnt++;
         }
     }
-    std::cout << distance[e] << '\n' << cnt <<  '\n';
+    return edgeCount;
+}
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n, m;
+    std::cin >> n >> m;
+    for(int i = 0; i < m; i++)
+    {
+        int from, to, weight;
+        std::cin >> from >> to >> weight;
+        adj[from].push_back({to, weight});
+        reverseAdj[to].push_back({from, weight});
+        indegree[to]++;
+    }
+    int start, target;
+    std::cin >> start >> target;
+    longestPaths(start);
+    std::cout << dist[target] << '\n' << countCritical(target) << '\n';
+    return 0;
 }

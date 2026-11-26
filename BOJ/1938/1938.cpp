@@ -1,127 +1,114 @@
-//
-//  main.cpp
-//  1938
-//
-//  Created by 진준호 on 2020/05/21.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
 #include <iostream>
-#include <string>
-#include <vector>
-#include <cstring>
 #include <queue>
-struct node
+#include <string>
+#include <utility>
+#include <vector>
+
+struct State
 {
-    int x;
-    int y;
-    int state;
-    int distance;
+    int row, col, dir, dist;
 };
-int dx[4] = {1, 0, -1, 0}, dy[4] = {0, 1, 0, -1};
-int tdx[2][2] = {{0, 0}, {-1, 1}}, tdy[2][2] = {{-1, 1}, {0, 0}};
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int n, start_state = 0, end_state = 0, visited[50][50][2], ans = 0;
-    std::string map[50];
-    std::vector<std::pair<int, int>> start, end;
-    // 0이면 수평 1이면 수직
-    std::queue<node> q;
-    std::memset(visited, 0, sizeof(visited));
-    
-    std::cin >> n;
-    for(int i = 0; i < n; i++)
+
+bool canMove(const std::vector<std::string> &grid, int row, int col, int dir)
+{
+    const int n = grid.size();
+    for(int offset = -1; offset <= 1; offset++)
     {
-        std::cin >> map[i];
-        for(int j = 0; j < n; j++)
+        int r = row + (dir == 1 ? offset : 0);
+        int c = col + (dir == 0 ? offset : 0);
+        if(r < 0 || c < 0 || r >= n || c >= n || grid[r][c] != '0')
         {
-            if(map[i][j] == 'B')
+            return false;
+        }
+    }
+    return true;
+}
+
+bool canRotate(const std::vector<std::string> &grid, int row, int col)
+{
+    const int n = grid.size();
+    if(row < 1 || col < 1 || row + 1 >= n || col + 1 >= n)
+    {
+        return false;
+    }
+    for(int r = row - 1; r <= row + 1; r++)
+    {
+        for(int c = col - 1; c <= col + 1; c++)
+        {
+            if(grid[r][c] != '0')
             {
-                start.push_back({i, j});
-                map[i][j] = '0';
-            }
-            if(map[i][j] == 'E')
-            {
-                end.push_back({i, j});
-                map[i][j] = '0';
+                return false;
             }
         }
     }
-    if(start[0].first + 1 == start[1].first)
+    return true;
+}
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int n;
+    std::cin >> n;
+    std::vector<std::string> grid(n);
+    std::vector<std::pair<int, int>> start, target;
+    for(int row = 0; row < n; row++)
     {
-        start_state = 1;
+        std::cin >> grid[row];
+        for(int col = 0; col < n; col++)
+        {
+            if(grid[row][col] == 'B')
+            {
+                start.push_back({row, col});
+                grid[row][col] = '0';
+            }
+            else if(grid[row][col] == 'E')
+            {
+                target.push_back({row, col});
+                grid[row][col] = '0';
+            }
+        }
     }
-    if(end[0].first + 1 == end[1].first)
-    {
-        end_state = 1;
-    }
-    
-    q.push({start[1].first, start[1].second, start_state, 0});
-    visited[start[1].first][start[1].second][start_state] = 1;
-    
+    // 0: horizontal, 1: vertical.
+    const int startDir = start[0].first != start[1].first;
+    const int targetDir = target[0].first != target[1].first;
+    bool visited[50][50][2]{};
+    std::queue<State> q;
+    q.push({start[1].first, start[1].second, startDir, 0});
+    visited[start[1].first][start[1].second][startDir] = true;
+    constexpr int dr[4] = {1, 0, -1, 0};
+    constexpr int dc[4] = {0, 1, 0, -1};
+    int answer = 0;
     while(!q.empty())
     {
-        node front = q.front();
+        const auto current = q.front();
         q.pop();
-        if(end[1].first == front.x && end[1].second == front.y && end_state == front.state)
+        auto [row, col, dir, dist] = current;
+        if(row == target[1].first && col == target[1].second && dir == targetDir)
         {
-            ans = front.distance;
+            answer = dist;
             break;
         }
-        
-        int sx = front.x - 1;
-        int sy = front.y - 1;
-        int ex = front.x + 1;
-        int ey = front.y + 1;
-        if(sx >= 0 && sy >= 0 && ex < n && ey < n && !visited[front.x][front.y][(front.state + 1) % 2])
+        const int nextDir = 1 - dir;
+        if(!visited[row][col][nextDir] && canRotate(grid, row, col))
         {
-            int zero_count = 0;
-            for(int i = sx; i <= ex; i++)
-            {
-                for(int j = sy; j <= ey; j++)
-                {
-                    if(map[i][j] == '0')
-                    {
-                        zero_count++;
-                    }
-                }
-            }
-            if(zero_count == 9)
-            {
-                visited[front.x][front.y][(front.state + 1) % 2] = 1;
-                q.push({front.x, front.y, (front.state + 1) % 2, front.distance + 1});
-            }
+            visited[row][col][nextDir] = true;
+            q.push({row, col, nextDir, dist + 1});
         }
         for(int i = 0; i < 4; i++)
         {
-            int nx = dx[i] + front.x;
-            int ny = dy[i] + front.y;
-            if(nx < 0 || ny < 0 || nx >= n || ny >= n || map[nx][ny] != '0' || visited[nx][ny][front.state])
+            int nextRow = row + dr[i], nextCol = col + dc[i];
+            if(!canMove(grid, nextRow, nextCol, dir) || visited[nextRow][nextCol][dir])
             {
                 continue;
             }
-            int zero_count = 1;
-            for(int j = 0; j < 2; j++)
-            {
-                int tnx = tdx[front.state][j] + nx;
-                int tny = tdy[front.state][j] + ny;
-                if(tnx < 0 || tny < 0 || tnx >= n || tny >= n || map[tnx][tny] != '0')
-                {
-                    break;
-                }
-                zero_count++;
-            }
-            if(zero_count == 3)
-            {
-                visited[nx][ny][front.state] = 1;
-                q.push({nx, ny, front.state, front.distance + 1});
-            }
+            visited[nextRow][nextCol][dir] = true;
+            q.push({nextRow, nextCol, dir, dist + 1});
         }
     }
-    std::cout << ans << '\n';
+    std::cout << answer << '\n';
     return 0;
 }
