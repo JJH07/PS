@@ -1,58 +1,47 @@
-#include <bits/stdc++.h>
-typedef std::pair<int, int> pii;
+#include <algorithm>
+#include <iostream>
+#include <queue>
+#include <utility>
+#include <vector>
 
-int n, L, P;
-std::vector<pii> gas;
-std::priority_queue<int> pq;
-
-int solve()
+int minStops(const std::vector<std::pair<int, int>> &stations, int target, int reach)
 {
-    int e = 0, ret = 0;
-    for(; e < n; e++)
+    std::priority_queue<int> fuel;
+    std::size_t next = 0;
+    int stops = 0;
+    while(reach < target)
     {
-        if(gas[e].first > P)
+        while(next < stations.size() && stations[next].first <= reach)
         {
-            break;
+            fuel.push(stations[next].second);
+            next++;
         }
-        pq.push(gas[e].second);
+        if(fuel.empty())
+        {
+            return -1;
+        }
+        reach += fuel.top();
+        fuel.pop();
+        stops++;
     }
-    while(!pq.empty())
-    {
-        if(L <= P)
-        {
-            break;
-        }
-        P += pq.top();
-        pq.pop();
-        ++ret;
-
-        for(; e < n; e++)
-        {
-            if(gas[e].first > P)
-            {
-                break;
-            }
-            pq.push(gas[e].second);
-        }
-    }
-    return L <= P ? ret : -1;
+    return stops;
 }
+
 int main()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
-    std::cout.tie(NULL);
+    std::cin.tie(nullptr);
 
+    int n;
     std::cin >> n;
-    for(int i = 0; i < n; i++)
+    std::vector<std::pair<int, int>> stations(n);
+    for(auto &[pos, fuel] : stations)
     {
-        int a, b;
-        std::cin >> a >> b;
-        gas.push_back({a, b});
+        std::cin >> pos >> fuel;
     }
-    std::sort(gas.begin(), gas.end());
-    std::cin >> L >> P;
-
-    std::cout << solve() << '\n';
+    std::sort(stations.begin(), stations.end());
+    int target, reach;
+    std::cin >> target >> reach;
+    std::cout << minStops(stations, target, reach) << '\n';
     return 0;
 }

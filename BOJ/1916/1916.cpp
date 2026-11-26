@@ -1,60 +1,56 @@
-//
-//  main.cpp
-//  1916
-//
-//  Created by 진준호 on 2020/05/12.
-//  Copyright © 2020 진준호. All rights reserved.
-//
+// Copyright © 2020 진준호. All rights reserved.
 
-#include <iostream>
-#include <cstring>
 #include <algorithm>
+#include <functional>
+#include <iostream>
 #include <queue>
+#include <utility>
+#include <vector>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int n, m, distance[1001], s, e;
-    std::vector<std::pair<int, int>> plan[1001];
-    
-    std::fill(distance, distance + 1001, 2147000000);
-    
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    constexpr int INF = 2147000000;
+    int n, m, start, target;
     std::cin >> n >> m;
+    std::vector<std::vector<std::pair<int, int>>> adj(n + 1);
     for(int i = 0; i < m; i++)
     {
-        int a, b, c;
-        std::cin >> a >> b >> c;
-        plan[a].push_back({b, c});
+        int from, to, cost;
+        std::cin >> from >> to >> cost;
+        adj[from].push_back({to, cost});
     }
-    std::cin >> s >> e;
-    
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
-    
-    pq.push({0, s});
-    distance[s] = 0;
+    std::cin >> start >> target;
+
+    std::vector<int> dist(n + 1, INF);
+    using Entry = std::pair<int, int>;
+    std::priority_queue<Entry, std::vector<Entry>, std::greater<Entry>> pq;
+    dist[start] = 0;
+    pq.push({0, start});
     while(!pq.empty())
     {
-        int node = pq.top().second;
-        int dist = pq.top().first;
+        auto [cost, node] = pq.top();
         pq.pop();
-        if(distance[node] > dist)
+        if(cost > dist[node])
         {
             continue;
         }
-        for(auto next : plan[node])
+        if(node == target)
         {
-            int next_node = next.first;
-            int next_dist = next.second + dist;
-            if(next_dist < distance[next_node])
+            break;
+        }
+        for(auto [next, weight] : adj[node])
+        {
+            const int nextCost = cost + weight;
+            if(nextCost < dist[next])
             {
-                distance[next_node] = next_dist;
-                pq.push({next_dist, next_node});
+                dist[next] = nextCost;
+                pq.push({nextCost, next});
             }
         }
     }
-    std::cout << distance[e] << '\n';
+    std::cout << dist[target] << '\n';
     return 0;
 }

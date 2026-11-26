@@ -1,24 +1,23 @@
 #include <iostream>
 #include <algorithm>
-#include <cstring>
 #include <vector>
-#define MAX 501
+constexpr int MAX = 501;
 
-int n, k, d[MAX];
-bool check[MAX];
-std::vector<int> Y[MAX];
-bool dfs(int x)
+int n, k, match[MAX];
+bool visited[MAX];
+std::vector<int> adj[MAX];
+bool dfs(int row)
 {
-    if(check[x])
+    if(visited[row])
     {
         return false;
     }
-    check[x] = true;
-    for(int y : Y[x])
+    visited[row] = true;
+    for(int col : adj[row])
     {
-        if(d[y] == 0 || dfs(d[y]))
+        if(match[col] == 0 || dfs(match[col]))
         {
-            d[y] = x;
+            match[col] = row;
             return true;
         }
     }
@@ -26,25 +25,25 @@ bool dfs(int x)
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     std::cin >> n >> k;
     for(int i = 0; i < k; i++)
     {
         int a, b;
         std::cin >> a >> b;
-        Y[a].push_back(b);
+        adj[a].push_back(b);
     }
-    int ans = 0;
+    int count = 0;
     for(int i = 1; i <= n; i++)
     {
-        std::memset(check, 0, sizeof(check));
+        std::fill(visited, visited + n + 1, false);
         if(dfs(i))
         {
-            ans++;
+            count++;
         }
     }
-    std::cout << ans << '\n';
+    std::cout << count << '\n';
     return 0;
 }

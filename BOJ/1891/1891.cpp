@@ -1,89 +1,68 @@
-#include <bits/stdc++.h>
-typedef long long ll;
-typedef std::pair<ll, ll> pii;
+#include <iostream>
+#include <string>
+#include <utility>
 
-ll d, x, y;
-std::string n;
-pii operator+(pii a, pii b)
+using ll = long long;
+
+std::pair<ll, ll> decode(const std::string &code, ll size)
 {
-   return {a.first + b.first, a.second + b.second};
+    ll row = 0, col = 0;
+    for(char digit : code)
+    {
+        size /= 2;
+        if(digit == '3' || digit == '4')
+        {
+            row += size;
+        }
+        if(digit == '1' || digit == '4')
+        {
+            col += size;
+        }
+    }
+    return {row, col};
 }
-pii operator-=(pii &a, pii b)
+
+std::string encode(ll row, ll col, ll size, int depth)
 {
-    a.first -= b.first;
-    a.second -= b.second;
-    return a;
+    std::string code;
+    code.reserve(depth);
+    for(ll half = size / 2; half > 0; half /= 2)
+    {
+        if(row >= half)
+        {
+            code += col >= half ? '4' : '3';
+            row -= half;
+        }
+        else
+        {
+            code += col >= half ? '1' : '2';
+        }
+        if(col >= half)
+        {
+            col -= half;
+        }
+    }
+    return code;
 }
-pii get_pos(int idx, ll _size)
-{
-    if(idx == d)
-    {
-        return {0, 0};
-    }
-    pii next;
-    if(n[idx] == '1')
-    {
-        next = std::make_pair(0, _size);
-    }
-    else if(n[idx] == '2')
-    {
-        next = std::make_pair(0, 0);
-    }
-    else if(n[idx] == '3')
-    {
-        next = std::make_pair(_size, 0);
-    }
-    else
-    {  
-        next = std::make_pair(_size, _size);
-    }
-    return next + get_pos(idx + 1, _size / 2);
-}
-void print(std::string &answer, pii pos, ll _size)
-{
-    if(_size == 0)
-    {
-        return ;
-    }
-    if(pos.first >= _size && pos.second >= _size)
-    {
-        answer += "4";
-        pos -= std::make_pair(_size, _size);
-    }
-    else if(pos.first >= _size)
-    {
-        answer += "3";
-        pos -= std::make_pair(_size, 0);
-    }
-    else if(pos.second >= _size)
-    {
-        answer += "1";
-        pos -= std::make_pair(0, _size);
-    }
-    else
-    {
-        answer += "2";
-    }
-    print(answer, pos, _size / 2);
-}
+
 int main()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
-    std::cin >> d >> n >> x >> y;
-    ll size = 1LL << d;
-
-    pii Pos = get_pos(0, size / 2);
-    Pos.first -= y;
-    Pos.second += x;
-    if(Pos.first < 0 || Pos.second < 0 || Pos.first >= size || Pos.second >= size)
+    int depth;
+    std::string code;
+    ll dx, dy;
+    std::cin >> depth >> code >> dx >> dy;
+    const ll size = 1LL << depth;
+    auto [row, col] = decode(code, size);
+    row -= dy;
+    col += dx;
+    if(row < 0 || col < 0 || row >= size || col >= size)
     {
         std::cout << "-1\n";
         return 0;
     }
-    std::string ans;
-    print(ans, Pos, size / 2);
-    std::cout << ans << '\n';
+    std::cout << encode(row, col, size, depth) << '\n';
     return 0;
 }

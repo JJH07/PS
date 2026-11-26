@@ -1,75 +1,64 @@
 #include <iostream>
-#include <vector>
 #include <stack>
+#include <string>
+
+int precedence(char op)
+{
+    if(op == '+' || op == '-')
+    {
+        return 1;
+    }
+    if(op == '*' || op == '/')
+    {
+        return 2;
+    }
+    return 0;
+}
 
 int main()
 {
-    std::cin.sync_with_stdio(false);
-	std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-	std::string str, ans;
-	std::stack<char> stk;
-
-	std::cin >> str;
-	for (char c : str)
+    std::string expr, postfix;
+    std::stack<char> ops;
+    std::cin >> expr;
+    postfix.reserve(expr.size());
+    for(char token : expr)
     {
-		if ('A' <= c && c <= 'Z')
+        if('A' <= token && token <= 'Z')
         {
-			ans += c;
-		}
-		else
+            postfix += token;
+        }
+        else if(token == '(')
         {
-			switch (c)
-			{
-                case '(':
-                    stk.push(c);
-                    break;
-                case '*':
-                case '/':
-                    while (!stk.empty())
-                    {
-                        if(stk.top() != '*' && stk.top() != '/')
-                        {
-                            break;
-                        }
-                        ans += stk.top();
-                        stk.pop();
-                    }
-                    stk.push(c);
-                    break;
-                case '+':
-                case '-':
-                    while (!stk.empty())
-                    {
-                        if(stk.top() == '(')
-                        {
-                            break;
-                        }
-                        ans += stk.top();
-                        stk.pop();
-                    }
-                    stk.push(c);
-                    break;
-                case ')':
-                    while (!stk.empty())
-                    {
-                        if(stk.top() == '(')
-                        {
-                            break;
-                        }
-                        ans += stk.top();
-                        stk.pop();
-                    }
-                    stk.pop();
-                    break;
-			}
-		}
-	}
-	while (!stk.empty())
+            ops.push(token);
+        }
+        else if(token == ')')
+        {
+            while(ops.top() != '(')
+            {
+                postfix += ops.top();
+                ops.pop();
+            }
+            ops.pop();
+        }
+        else
+        {
+            while(!ops.empty() && ops.top() != '(' &&
+                  precedence(ops.top()) >= precedence(token))
+            {
+                postfix += ops.top();
+                ops.pop();
+            }
+            ops.push(token);
+        }
+    }
+    while(!ops.empty())
     {
-		ans += stk.top();
-		stk.pop();
-	}
-	std::cout << ans << "\n";
-	return 0;
+        postfix += ops.top();
+        ops.pop();
+    }
+    std::cout << postfix << '\n';
+    return 0;
 }

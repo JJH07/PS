@@ -1,64 +1,63 @@
 #include <iostream>
+#include <utility>
 #include <vector>
-#include <algorithm>
-#define MAX 501
-#define INF (long long)1e9
-typedef long long ll;
-typedef std::pair<int, ll> pil;
-int n, m, k;
-ll distance[MAX];
-std::vector<pil> link[MAX]; 
+
+using ll = long long;
+
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-    
-    int tc;
-    std::cin >> tc;
-    while(tc--)
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    int tests;
+    std::cin >> tests;
+    while(tests--)
     {
-        std::cin >> n >> m >> k;
-        for(int i = 0; i < m; i++)
+        int n, roads, holes;
+        std::cin >> n >> roads >> holes;
+        std::vector<std::vector<std::pair<int, ll>>> adj(n + 1);
+        for(int i = 0; i < roads; i++)
         {
-            int s, e;
-            ll t;
-            std::cin >> s >> e >> t;
-            link[s].push_back({e, t});
-            link[e].push_back({s, t});
+            int from, to;
+            ll time;
+            std::cin >> from >> to >> time;
+            adj[from].push_back({to, time});
+            adj[to].push_back({from, time});
         }
-        for(int i = 0; i < k; i++)
+        for(int i = 0; i < holes; i++)
         {
-            int s, e;
-            ll t;
-            std::cin >> s >> e >> t;
-            link[s].push_back({e, -t});
+            int from, to;
+            ll time;
+            std::cin >> from >> to >> time;
+            adj[from].push_back({to, -time});
         }
-        bool FLAG = false; 
-        distance[1] = 0;
-        for(int i = 1; i <= n; i++)
+
+        std::vector<ll> dist(n + 1, 0);
+        bool hasCycle = false;
+        for(int pass = 1; pass <= n; pass++)
         {
-            for(int idx = 1; idx <= n; idx++)
+            bool changed = false;
+            for(int node = 1; node <= n; node++)
             {
-                for(auto [next, v] : link[idx])
+                for(auto [next, weight] : adj[node])
                 {
-                    if(distance[next] > distance[idx] + v)
+                    if(dist[next] > dist[node] + weight)
                     {
-                        distance[next] = distance[idx] + v;
-                        if(i == n)
-                        {
-                            FLAG = true;
-                        }
+                        dist[next] = dist[node] + weight;
+                        changed = true;
                     }
                 }
             }
+            if(!changed)
+            {
+                break;
+            }
+            if(pass == n)
+            {
+                hasCycle = true;
+            }
         }
-        std::cout << (FLAG ? "YES\n" : "NO\n");
-
-        std::fill(distance, distance + MAX, INF);
-        for(int i = 1; i < MAX; i++)
-        {
-            link[i].clear();
-        }
+        std::cout << (hasCycle ? "YES\n" : "NO\n");
     }
     return 0;
 }
