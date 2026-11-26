@@ -1,25 +1,29 @@
-#include <bits/stdc++.h>
-int fibo[1000001];
+#include <cstdlib>
+#include <iostream>
+
+constexpr int MOD = 1000000000;
+
 int main()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::cin.tie(nullptr);
 
     int n;
-	std::cin >> n;
+    std::cin >> n;
+    const int size = std::abs(n);
+    int prev = 0, current = 1;
+    for(int i = 0; i < size; i++)
+    {
+        int next = (prev + current) % MOD;
+        prev = current;
+        current = next;
+    }
 
-	fibo[0] = 0;
-	fibo[1] = 1;
-	fibo[2] = 1;
-	for (int i = 3; i <= abs(n); i++)
-	{
-		fibo[i] = (fibo[i - 1] + fibo[i - 2]) % 1000000000;
-	}
-
-	if(n == 0) std::cout << 0;
-	else if(n > 0) std::cout << 1;
-	else std::cout << (n % 2 == 0 ? -1 : 1);
-
-	std::cout << '\n' << fibo[abs(n)];
+    int sign = 0;
+    if(n != 0)
+    {
+        sign = n < 0 && n % 2 == 0 ? -1 : 1;
+    }
+    std::cout << sign << '\n' << prev;
     return 0;
 }

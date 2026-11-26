@@ -1,24 +1,22 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <cstring>
-#define MAX 20
-typedef std::pair<int, int> pii;
-int n, d[MAX];
-bool check[MAX];
-std::vector<int> link[MAX];
-bool dfs(int X)
+constexpr int MAX = 20;
+int n, match[MAX];
+bool visited[MAX];
+std::vector<int> adj[MAX];
+bool dfs(int diag)
 {
-    if(check[X])
+    if(visited[diag])
     {
         return false;
     }
-    check[X] = true;
-    for(auto Y : link[X])
+    visited[diag] = true;
+    for(auto next : adj[diag])
     {
-        if(d[Y] == 0 || dfs(d[Y]))
+        if(match[next] == 0 || dfs(match[next]))
         {
-            d[Y] = X;
+            match[next] = diag;
             return true;
         }
     }
@@ -26,8 +24,8 @@ bool dfs(int X)
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     std::cin >> n;
     for(int i = 0; i < n; i++)
@@ -38,19 +36,19 @@ int main()
             std::cin >> pos;
             if(pos == 1)
             {
-                link[i + j + 1].push_back(5 - i + j);
+                adj[i + j + 1].push_back(5 - i + j);
             }
         }
     }
-    int ans = 0;
-    for(int i = 1; i < MAX; i++)
+    int count = 0;
+    for(int i = 1; i < 2 * n; i++)
     {
-        std::memset(check, 0, sizeof(check));
+        std::memset(visited, 0, sizeof(visited));
         if(dfs(i))
         {
-            ans++;
+            count++;
         }
     }
-    std::cout << ans << '\n';
+    std::cout << count << '\n';
     return 0;
 }

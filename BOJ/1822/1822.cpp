@@ -3,35 +3,32 @@
 #include <algorithm>
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-    int a, b;
-    std::vector<int> ans, A, B;
-    std::cin >> a >> b;
-    for(int i = 0; i < a; i++)
+    int n, m;
+    std::cin >> n >> m;
+    std::vector<int> a(n), b(m), result;
+    result.reserve(n);
+    for(int &value : a)
     {
-        int t;
-        std::cin >> t;
-        A.push_back(t);
+        std::cin >> value;
     }
-    for(int i = 0; i < b; i++)
+    for(int &value : b)
     {
-        int t;
-        std::cin >> t;
-        B.push_back(t);
+        std::cin >> value;
     }
-    std::sort(A.begin(), A.end());
-    std::sort(B.begin(), B.end());
+    std::sort(a.begin(), a.end());
+    std::sort(b.begin(), b.end());
 
     int ai = 0, bi = 0;
-    while(ai < a)
+    while(ai < n)
     {
-        if(bi >= b || A[ai] < B[bi])
+        if(bi >= m || a[ai] < b[bi])
         {
-            ans.push_back(A[ai++]);
+            result.push_back(a[ai++]);
         }
-        else if(A[ai] == B[bi])
+        else if(a[ai] == b[bi])
         {
             ai++;
             bi++;
@@ -41,8 +38,8 @@ int main()
             bi++;
         }
     }
-    std::cout << ans.size() << '\n';
-    for(auto x : ans)
+    std::cout << result.size() << '\n';
+    for(auto x : result)
     {
         std::cout << x << ' ';
     }

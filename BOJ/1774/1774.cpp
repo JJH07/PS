@@ -2,34 +2,35 @@
 #include <cstring>
 #include <queue>
 #include <cmath>
-struct pqn{
-    int x, y;
+#include <utility>
+struct Edge{
+    int from, to;
     double dist;
-    bool operator<(const pqn &rhs)const{
+    bool operator<(const Edge &rhs)const{
         return dist > rhs.dist;
     }
 };
 int parent[1001];
 
-double inline fx(std::pair<double, double> &x, std::pair<double, double> &y)
+double distance(const std::pair<double, double> &a, const std::pair<double, double> &b)
 {
-    return sqrt(pow(x.first - y.first, 2) + pow(x.second - y.second, 2));
+    return std::sqrt(std::pow(a.first - b.first, 2) + std::pow(a.second - b.second, 2));
 }
-int Find(int idx)
+int findRoot(int idx)
 {
     if(parent[idx] < 0)
     {
         return idx;
     }
-    return parent[idx] = Find(parent[idx]);
+    return parent[idx] = findRoot(parent[idx]);
 }
-void Union(int x, int y)
+bool unite(int x, int y)
 {
-    x = Find(x);
-    y = Find(y);
+    x = findRoot(x);
+    y = findRoot(y);
     if(x == y)
     {
-        return ;
+        return false;
     }
     if(parent[x] > parent[y])
     {
@@ -41,19 +42,21 @@ void Union(int x, int y)
         parent[x] += parent[y];
         parent[y] = x;
     }
+    return true;
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     std::cout << std::fixed;
     std::cout.precision(2);
     std::memset(parent, -1, sizeof(parent));
 
     int n, m;
     std::pair<double, double> pos[1001];
-    std::priority_queue<pqn> pq;
+    std::priority_queue<Edge> pq;
     std::cin >> n >> m;
+    int components = n;
     for(int i = 1; i <= n; i++)
     {
         std::cin >> pos[i].first >> pos[i].second;
@@ -62,27 +65,29 @@ int main()
     {
         for(int j = i + 1; j <= n; j++)
         {
-            pq.push({i, j, fx(pos[i], pos[j])});
+            pq.push({i, j, distance(pos[i], pos[j])});
         }
     }
     for(int i = 0; i < m; i++)
     {
         int a, b;
         std::cin >> a >> b;
-        Union(a, b);
-    }
-    double ans = 0;
-    while(!pq.empty())
-    {
-        auto [x, y, d] = pq.top();
-        pq.pop();
-        if(Find(x) == Find(y))
+        if(unite(a, b))
         {
-            continue;
+            components--;
         }
-        Union(x, y);
-        ans += d;
     }
-    std::cout << ans << '\n';
+    double total = 0;
+    while(components > 1 && !pq.empty())
+    {
+        auto [from, to, dist] = pq.top();
+        pq.pop();
+        if(unite(from, to))
+        {
+            total += dist;
+            components--;
+        }
+    }
+    std::cout << total << '\n';
     return 0;
 }

@@ -1,33 +1,42 @@
 #include <iostream>
 #include <vector>
-#define MAX 40001
-#define DEPTH 16
+#include <utility>
+constexpr int MAX = 40001;
+constexpr int LOG = 16;
 typedef long long ll;
 typedef std::pair<int, ll> pii;
-int n, m, level[MAX], parent[MAX][DEPTH];
-ll distance[MAX];
-std::vector<pii> link[MAX];
-void dfs(int now, int lv)
+int n, m, depth[MAX], parent[MAX][LOG];
+ll dist[MAX];
+std::vector<pii> adj[MAX];
+void buildTree()
 {
-    for(auto [next, dist] : link[now])
+    std::vector<int> stack{1};
+    depth[1] = 1;
+    while(!stack.empty())
     {
-        if(level[next] == 0)
+        int node = stack.back();
+        stack.pop_back();
+        for(auto [next, weight] : adj[node])
         {
-            level[next] = lv + 1;
-            distance[next] = distance[now] + dist;
-            parent[next][0] = now;
-            dfs(next, lv + 1);
+            if(depth[next] != 0)
+            {
+                continue;
+            }
+            depth[next] = depth[node] + 1;
+            dist[next] = dist[node] + weight;
+            parent[next][0] = node;
+            stack.push_back(next);
         }
     }
 }
-ll solve(int x, int y)
+ll pathCost(int x, int y)
 {
-    ll ret = distance[x] + distance[y];
-    if(level[x] > level[y])
+    ll cost = dist[x] + dist[y];
+    if(depth[x] > depth[y])
     {
         std::swap(x, y);
     }
-    int diff = level[y] - level[x];
+    int diff = depth[y] - depth[x];
     for(int i = 0; diff > 0; i++)
     {
         if(diff % 2)
@@ -38,7 +47,7 @@ ll solve(int x, int y)
     }
     if(x != y)
     {
-        for(int i = DEPTH - 1; i >= 0; i--)
+        for(int i = LOG - 1; i >= 0; i--)
         {
             if(parent[x][i] > 0 && parent[x][i] != parent[y][i])
             {
@@ -48,25 +57,24 @@ ll solve(int x, int y)
         }
         x = parent[x][0];
     }
-    ret -= distance[x] * 2;
-    return ret;
+    cost -= dist[x] * 2;
+    return cost;
 }
 int main()
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     std::cin >> n;
     for(int i = 0; i < n - 1; i++)
     {
         int a, b;
         ll c;
         std::cin >> a >> b >> c;
-        link[a].push_back({b, c});
-        link[b].push_back({a, c});
+        adj[a].push_back({b, c});
+        adj[b].push_back({a, c});
     }
-    level[1] = 1;
-    dfs(1, 1);
-    for(int j = 0; j < DEPTH; j++)
+    buildTree();
+    for(int j = 0; j < LOG; j++)
     {
         for(int i = 1; i <= n; i++)
         {
@@ -81,7 +89,7 @@ int main()
     {
         int a, b;
         std::cin >> a >> b;
-        ll ans = solve(a, b);
+        ll ans = pathCost(a, b);
         std::cout << ans << '\n';
     }
     return 0;

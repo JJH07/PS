@@ -1,10 +1,4 @@
-//
-//  main.cpp
-//  1764
-//
-//  Created by 진준호 on 2020/01/28.
 //  Copyright © 2020 진준호. All rights reserved.
-//
 
 #include <iostream>
 #include <set>
@@ -12,39 +6,39 @@
 #include <vector>
 #include <algorithm>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
     int n, m;
-    std::set<std::string> n_list;
+    std::set<std::string> names;
     std::string name;
-    std::vector<std::string> nm_list;
-    
+    std::vector<std::string> common;
+
     std::cin >> n >> m;
-    
+    common.reserve(std::min(n, m));
+
     for(int i = 0; i < n; i++)
     {
         std::cin >> name;
-        n_list.insert(name);
+        names.insert(name);
     }
     for(int i = 0; i < m; i++)
     {
         std::cin >> name;
-        if(n_list.find(name) != n_list.end())
+        if(names.find(name) != names.end())
         {
-            nm_list.push_back(name);
+            common.push_back(name);
         }
     }
-    sort(nm_list.begin(), nm_list.end());
-    
-    std::cout << (int)nm_list.size() << '\n';
-    for(std::vector<std::string>::iterator it = nm_list.begin(); it != nm_list.end(); it++)
+    std::sort(common.begin(), common.end());
+
+    std::cout << (int)common.size() << '\n';
+    for(const auto &name : common)
     {
-        std::cout << *it << '\n';
+        std::cout << name << '\n';
     }
-    
+
     return 0;
 }

@@ -1,58 +1,64 @@
 #include <iostream>
 #include <string>
-#include <cstring>
 #include <vector>
 
-std::string T, P;
-int pattern[1000001], T_sz,  P_sz;
-std::vector<int> ans;
-int main()
+std::vector<int> buildPrefix(const std::string &pattern)
 {
-    std::cin.sync_with_stdio(false);
-    std::cin.tie(NULL);
-
-    std::getline(std::cin, T);
-    std::getline(std::cin, P);
-    T_sz = (int)T.length();
-    P_sz = (int)P.length();
-
+    const int size = pattern.size();
+    std::vector<int> pi(size, 0);
     int j = 0;
-    for(int i = 1; i < P_sz; i++)
+    for(int i = 1; i < size; i++)
     {
-        while(j > 0 && P[i] != P[j])
+        while(j > 0 && pattern[i] != pattern[j])
         {
-            j = pattern[j - 1];
+            j = pi[j - 1];
         }
-        if(P[i] == P[j])
+        if(pattern[i] == pattern[j])
         {
-            pattern[i] = ++j;
+            pi[i] = ++j;
         }
     }
-    j = 0;
-    for(int i = 0; i < T_sz; i++)
+    return pi;
+}
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    std::string text, pattern;
+    std::getline(std::cin, text);
+    std::getline(std::cin, pattern);
+    const int textSize = text.size();
+    const int patternSize = pattern.size();
+    const auto pi = buildPrefix(pattern);
+    std::vector<int> matches;
+
+    int j = 0;
+    for(int i = 0; i < textSize; i++)
     {
-        while(j > 0 && T[i] != P[j])
+        while(j > 0 && text[i] != pattern[j])
         {
-            j = pattern[j - 1];
+            j = pi[j - 1];
         }
-        if(T[i] != P[j])
+        if(text[i] != pattern[j])
         {
             continue;
         }
-        if(j == P_sz - 1)
+        if(j == patternSize - 1)
         {
-            ans.push_back(i - P_sz + 2);
-            j = pattern[j];
+            matches.push_back(i - patternSize + 2);
+            j = pi[j];
         }
         else
         {
             j++;
         }
     }
-    std::cout << ans.size() << '\n';
-    for(auto x : ans)
+    std::cout << matches.size() << '\n';
+    for(int pos : matches)
     {
-        std::cout << x << '\n';
+        std::cout << pos << '\n';
     }
     return 0;
 }
